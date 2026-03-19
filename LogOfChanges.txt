@@ -1,0 +1,5 @@
+3/19 - Emma
+- user account creation, login, logout
+- automatic redirect when creating account (redirects to login)
+- automatic redirect after login (redirects to home)
+- created a test user (email: test3-19@test.com, pass: emmatest)
