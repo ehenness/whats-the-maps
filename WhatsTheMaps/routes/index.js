@@ -26,7 +26,8 @@ router.get('/login', (req, res) => {
 
 // GET dashboard/profile //
 router.get('/dashboard', isAuthenticated, (req, res) => {
-  res.send(`Welcome to your dashboard, ${req.session.user.username}`);
+  //res.send(`Welcome to your dashboard, ${req.session.user.username}`);
+  res.render('dashboard');
 });
 
 module.exports = router;
