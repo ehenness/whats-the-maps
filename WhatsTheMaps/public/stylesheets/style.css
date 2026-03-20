@@ -1,0 +1,79 @@
+/* ===== GENERAL ===== */
+body {
+    background-color: antiquewhite;
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+/* ===== TOP BAR ===== */
+.top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 5px;
+}
+
+/* LEFT SIDE (profile + username) */
+.left-section {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* PROFILE CIRCLE */
+.profile-pic {
+    height: 30px;
+    width: 30px;
+    background-color: grey;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+/* USERNAME */
+.username {
+    text-decoration: none;
+    color: black;
+    font-weight: bold;
+}
+
+/* LOGIN/LOGOUT BUTTON */
+.auth-button {
+    height: 30px;
+    width: 75px;
+    text-align: center;
+    background-color: bisque;
+    border: 1px solid black;
+}
+
+.auth-button h3 {
+    margin: 0;
+    margin-top: 5px;
+}
+
+.auth-link {
+    text-decoration: none;
+    color: black;
+}
+
+/* ===== CENTER OVAL ===== */
+.oval {
+    height: 150px;
+    width: 350px;
+    border-radius: 50%;
+    background-color: aqua;
+
+    transform: rotate(165deg);
+
+    position: fixed;
+    inset: 0;
+    margin: auto;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.oval-text {
+    transform: rotate(195deg);
+    text-align: center;
+}
