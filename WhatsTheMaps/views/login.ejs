@@ -1,11 +1,70 @@
-<h1>Login</h1>
+<!DOCTYPE html>
+<html>
+<head>
+</head>
 
-<form action="/users/login" method="POST">
-  <label>Email:</label><br>
-  <input type="email" name="email" required><br><br>
+<body style="background-color: antiquewhite; margin: 0;">
 
-  <label>Password:</label><br>
-  <input type="password" name="password" required><br><br>
+    <!-- Banner -->
+    <%- include('./partials/banner.ejs') %>
 
-  <button type="submit">Login</button>
-</form>
+    <!-- Back button (top right like login on home) -->
+    <div style="float: right; margin: 3px;">
+        <a href="/" style="text-decoration: none;">
+            <div style="height: 30px; width: 75px; text-align: center; background-color: bisque; border-style: solid;">
+                <h3 style="margin: 0; margin-top: 5px;">Home</h3>
+            </div>
+        </a>
+    </div>
+
+    <!-- Centered Login Form -->
+    <div style="
+        height: 150px;
+        width: 350px;
+        border-radius: 50%;
+        background-color: aqua;
+        transform: rotate(165deg);
+        position: fixed;
+        inset: 0;
+        margin: auto;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    ">
+
+        <div style="transform: rotate(195deg); text-align: center;">
+
+            <h2 style="margin-top: 0;">Login</h2>
+
+            <form action="/users/login" method="POST">
+                
+                <input 
+                    type="email" 
+                    name="email" 
+                    placeholder="Email"
+                    required
+                    style="margin: 5px; padding: 5px;"
+                ><br>
+
+                <input 
+                    type="password" 
+                    name="password" 
+                    placeholder="Password"
+                    required
+                    style="margin: 5px; padding: 5px;"
+                ><br>
+
+                <button 
+                    type="submit"
+                    style="margin-top: 10px; padding: 5px 10px; cursor: pointer;"
+                >
+                    Login
+                </button>
+
+            </form>
+
+        </div>
+    </div>
+
+</body>
+</html>
