@@ -16,8 +16,8 @@
             </div>
         </div>
         <div class="cities" style="background-color: azure; margin-left: 10%; position: fixed; width: 80%; border-style: solid; border-width: 1.5px; border-color: grey; top: 27.5%;">
-            <div class="container" style="display: flex; justify-content: left; width: 100%; align-items: center; margin-bottom: 5px;">
-                <div><h3 style="margin: 0px; padding-left: 5px;">City Name</h3></div>
+        <div class="container" style="display: flex; justify-content: left; width: 100%; align-items: center; margin-bottom: 5px;">
+                <!-- Test Popup Here ==> --><div><h3 id="test" style="margin: 0px; padding-left: 5px;">City Name</h3></div>
                 <div><t style="padding-left: 5px;">City Information (Foundation, Country, Language)</t></div>
             </div>
             <div class="container" style="display: flex; justify-content: left; width: 100%; align-items: center; margin-bottom: 5px;">
@@ -31,5 +31,16 @@
         </div>
         <!--Footer-->
         <%- include('./partials/footer.ejs') %>
+
+        <!--Popup
+
+        This doesn't work, I'm trying to figure it out - JF
+
+        <div id="popup">
+            <%- include('./partials/popup.ejs') %>
+        </div>
+        <script src="..\public\javascript\popup.js"></script>
+        -->
+
     </body>
 </html>

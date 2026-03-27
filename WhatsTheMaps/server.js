@@ -17,6 +17,10 @@ app.get("/cities", function (req, res) {
   res.render("cities");
 });
 
+app.get("/dashboard", function (req, res) {
+  res.render("dashboard");
+});
+
 app.listen(port, function () {
   console.log(`Example app listening on port ${port}!`);
 });

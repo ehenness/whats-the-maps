@@ -3,3 +3,8 @@
 - automatic redirect when creating account (redirects to login)
 - automatic redirect after login (redirects to home)
 - created a test user (email: test3-19@test.com, pass: emmatest)
+
+3/27 - JoseFelix
+- created basic popup for cities page
+- made footer "Home" and "Cities" redirect properly
+- working on popup functionality
