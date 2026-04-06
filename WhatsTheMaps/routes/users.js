@@ -3,8 +3,7 @@ const router = express.Router();
 const bcrypt = require('bcrypt');
 const db = require('../db');
 
-
-// TEST ROUTE
+// Test route
 router.get('/', (req, res) => {
   res.send('Users route working');
 });
@@ -17,8 +16,7 @@ function isAuthenticated(req, res, next) {
   return res.status(401).send('You must be logged in to delete your account.');
 }
 
-
-// SIGNUP ROUTE
+// Signup route
 router.post('/signup', async (req, res) => {
   const { username, email, password } = req.body;
 
@@ -43,14 +41,12 @@ router.post('/signup', async (req, res) => {
 
       res.redirect('/login');
     });
-
   } catch (error) {
     res.status(500).json({ error: 'Server error' });
   }
 });
 
-
-// LOGIN ROUTE
+// Login route
 router.post('/login', (req, res) => {
   const { email, password } = req.body;
 
@@ -85,26 +81,24 @@ router.post('/login', (req, res) => {
       };
 
       res.redirect('/');
-
     } catch (error) {
       res.status(500).send('Server error');
     }
   });
 });
 
-
-// LOGOUT ROUTE
+// Logout route
 router.get('/logout', (req, res) => {
   req.session.destroy((err) => {
     if (err) {
       return res.send('Error logging out');
     }
 
-    res.redirect('/'); // go back to home
+    return res.redirect('/');
   });
 });
 
-// DELETE ACCOUNT ROUTE
+// Delete account route
 router.post('/delete-account', isAuthenticated, (req, res) => {
   const userId = req.session.user.id;
   const { password } = req.body;
@@ -159,7 +153,5 @@ router.post('/delete-account', isAuthenticated, (req, res) => {
     }
   });
 });
-
-
 
 module.exports = router;

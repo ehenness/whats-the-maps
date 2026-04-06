@@ -4,7 +4,7 @@ const mysql = require('mysql2');
 const db = mysql.createConnection({
   host: 'localhost',
   user: 'root',
-  password: 'Emma2005', 
+  password: 'Emma2005',
   database: 'trivia_app'
 });
 

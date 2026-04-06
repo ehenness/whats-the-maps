@@ -1,4 +1,4 @@
-const express = require("express");
+const express = require('express');
 const app = express();
 const port = 3000;
 const path = require('path');
@@ -8,17 +8,16 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: true }));
 
-
-app.get("/", function (req, res) {
-  res.render("home");
+app.get('/', function (req, res) {
+  res.render('home');
 });
 
-app.get("/cities", function (req, res) {
-  res.render("cities");
+app.get('/cities', function (req, res) {
+  res.render('cities');
 });
 
-app.get("/dashboard", function (req, res) {
-  res.render("dashboard");
+app.get('/dashboard', function (req, res) {
+  res.render('dashboard');
 });
 
 app.listen(port, function () {

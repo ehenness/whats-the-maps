@@ -1,71 +1,46 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/stylesheets/style.css">
 </head>
+<body>
+  <%- include('./partials/banner.ejs') %>
 
-<body style="background-color: antiquewhite; margin: 0;">
-
-    <!-- Banner -->
-    <%- include('./partials/banner.ejs') %>
-
-    <!-- Back button (top right like login on home) -->
-    <div style="float: right; margin: 3px;">
-        <a href="/" style="text-decoration: none;">
-            <div style="height: 30px; width: 75px; text-align: center; background-color: bisque; border-style: solid;">
-                <h3 style="margin: 0; margin-top: 5px;">Home</h3>
-            </div>
-        </a>
+  <main class="page-shell">
+    <div class="top-bar">
+      <div></div>
+      <a class="button-link" href="/">
+        <span class="button">Home</span>
+      </a>
     </div>
 
-    <!-- Centered Login Form -->
-    <div style="
-        height: 150px;
-        width: 350px;
-        border-radius: 50%;
-        background-color: aqua;
-        transform: rotate(165deg);
-        position: fixed;
-        inset: 0;
-        margin: auto;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    ">
+    <section class="auth-layout">
+      <div class="page-card page-card--compact auth-card">
+        <h2 class="page-title">Login</h2>
 
-        <div style="transform: rotate(195deg); text-align: center;">
+        <form class="stacked-form" action="/users/login" method="POST">
+          <div class="form-group">
+            <label class="form-label" for="login-email">Email</label>
+            <input class="form-input" id="login-email" type="email" name="email" placeholder="Email" required>
+          </div>
 
-            <h2 style="margin-top: 0;">Login</h2>
+          <div class="form-group">
+            <label class="form-label" for="login-password">Password</label>
+            <input class="form-input" id="login-password" type="password" name="password" placeholder="Password" required>
+          </div>
 
-            <form action="/users/login" method="POST">
-                
-                <input 
-                    type="email" 
-                    name="email" 
-                    placeholder="Email"
-                    required
-                    style="margin: 5px; padding: 5px;"
-                ><br>
+          <button class="button button-primary" type="submit">Login</button>
+        </form>
 
-                <input 
-                    type="password" 
-                    name="password" 
-                    placeholder="Password"
-                    required
-                    style="margin: 5px; padding: 5px;"
-                ><br>
-
-                <button 
-                    type="submit"
-                    style="margin-top: 10px; padding: 5px 10px; cursor: pointer;"
-                >
-                    Login
-                </button>
-
-            </form>
-
+        <div class="auth-actions">
+          <a class="button-link" href="/signup">
+            <span class="button">Sign Up</span>
+          </a>
         </div>
-    </div>
+      </div>
+    </section>
+  </main>
 
+  <%- include('./partials/footer.ejs') %>
 </body>
 </html>
