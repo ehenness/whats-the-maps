@@ -34,6 +34,26 @@
             </div>
         </div>
 
+        <!--Account Settings-->
+        <h2>Account Settings</h2>
+        <form action="/users/delete-account" method="POST">
+            <label for="delete-password">Confirm with your password:</label>
+            <input
+                id="delete-password"
+                name="password"
+                type="password"
+                required
+                style="margin-left: 8px; padding: 6px;"
+            >
+            <button
+                type="submit"
+                style="background-color: red; color: white; padding: 10px; border:none; border-radius: 5px;"
+                onclick="return confirm('Are you sure you want to delete your account? This cannot be undone.')"
+            >
+                Delete Account
+            </button>
+        </form>
+
         <!--Footer-->
         <%- include('./partials/footer.ejs') %>
     </body>

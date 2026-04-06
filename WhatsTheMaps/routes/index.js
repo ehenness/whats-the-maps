@@ -30,4 +30,9 @@ router.get('/dashboard', isAuthenticated, (req, res) => {
   res.render('dashboard');
 });
 
+// GET cities page
+router.get('/cities', (req, res) => {
+  res.render('cities');
+});
+
 module.exports = router;

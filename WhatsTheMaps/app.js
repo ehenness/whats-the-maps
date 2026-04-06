@@ -60,6 +60,28 @@ app.get('/', (req, res) => {
   res.render('home');
 });
 
+// leaderboard
+app.get('/leaderboard', (req, res) => {
+  const sql = `
+    SELECT u.username, MAX(s.score) AS high_score
+    FROM users u
+    JOIN scores s ON u.id = s.user_id
+    WHERE u.is_deleted = FALSE
+    GROUP BY u.id
+    ORDER BY high_score DESC
+    LIMIT 10
+  `;
+
+  db.query(sql, (err, results) => {
+    if (err) {
+      console.error(err);
+      return res.send('Error loading leaderboard');
+    }
+
+    res.render('leaderboard', { leaderboard: results });
+  });
+});
+
 
 // ERROR HANDLING
 
