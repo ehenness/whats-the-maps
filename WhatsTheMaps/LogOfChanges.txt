@@ -1,0 +1,22 @@
+3/19 - Emma
+- user account creation, login, logout
+- automatic redirect when creating account (redirects to login)
+- automatic redirect after login (redirects to home)
+- created a test user (email: test3-19@test.com, pass: emmatest)
+
+3/27 - JoseFelix
+- created basic popup for cities page
+- made footer "Home" and "Cities" redirect properly
+- working on popup functionality
+
+4/6 - Emma
+- created scores table in SQL (when user completes a trivia game, saves score to database)
+- footer "Leaderboard" redirects properly
+- added leaderboard route
+- added error.ejs
+- added delete account option in user dashboard (soft delete -> deletes for user, hides from leaderboard, still available in DB)
+- created demo user (emmatest) was deleted in testing account deletion
+- edited how footer looks slightly --> no bullet points, only underlines link on hover
+- edited style sheet for better consistency when making/editing pages (had AI help with this)
+
+
