@@ -2,15 +2,28 @@
 <html>
 <head>
   <title>Error</title>
+  <link rel="stylesheet" href="/stylesheets/style.css">
 </head>
 <body>
-  <h1>Error</h1>
-  <p><%= message %></p>
+  <%- include('./partials/banner.ejs') %>
 
-  <% if (error) { %>
-    <pre><%= error.stack %></pre>
-  <% } %>
+  <main class="page-shell page-shell--centered">
+    <section class="page-card section-stack">
+      <h1 class="page-title">Error</h1>
+      <p class="page-subtitle"><%= message %></p>
 
-  <a href="/">Go Home</a>
+      <% if (error) { %>
+        <pre class="error-stack"><%= error.stack %></pre>
+      <% } %>
+
+      <div>
+        <a class="button-link" href="/">
+          <span class="button">Go Home</span>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <%- include('./partials/footer.ejs') %>
 </body>
 </html>

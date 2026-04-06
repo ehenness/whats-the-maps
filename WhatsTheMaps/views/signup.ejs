@@ -1,15 +1,38 @@
-<h1>Sign Up</h1>
-<head><link rel="stylesheet" href="/styles.css"></head>
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="/stylesheets/style.css">
+</head>
+<body>
+  <%- include('./partials/banner.ejs') %>
 
-<form action="/users/signup" method="POST">
-  <label>Email:</label><br>
-  <input type="email" name="email" required><br><br>
-  
-  <label>Username:</label><br>
-  <input type="text" name="username" required><br><br>
+  <main class="page-shell">
+    <section class="auth-layout">
+      <div class="page-card page-card--compact auth-card">
+        <h1 class="page-title">Sign Up</h1>
 
-  <label>Password:</label><br>
-  <input type="password" name="password" required><br><br>
+        <form class="stacked-form" action="/users/signup" method="POST">
+          <div class="form-group">
+            <label class="form-label" for="signup-email">Email</label>
+            <input class="form-input" id="signup-email" type="email" name="email" required>
+          </div>
 
-  <button type="submit">Sign Up</button>
-</form>
+          <div class="form-group">
+            <label class="form-label" for="signup-username">Username</label>
+            <input class="form-input" id="signup-username" type="text" name="username" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="signup-password">Password</label>
+            <input class="form-input" id="signup-password" type="password" name="password" required>
+          </div>
+
+          <button class="button button-primary" type="submit">Sign Up</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <%- include('./partials/footer.ejs') %>
+</body>
+</html>
