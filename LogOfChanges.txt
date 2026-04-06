@@ -3,6 +3,8 @@
 - automatic redirect when creating account (redirects to login)
 - automatic redirect after login (redirects to home)
 - created a test user (email: test3-19@test.com, pass: emmatest)
+- added redirect to dashboard when you click on your username/profile pic when signed in
+- changed login/logout button (changes to opposite when signed in vs out)
 
 3/27 - JoseFelix
 - created basic popup for cities page
