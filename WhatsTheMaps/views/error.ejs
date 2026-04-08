@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Error</title>
+  <link rel="stylesheet" href="/stylesheets/style.css">
+</head>
+<body>
+  <%- include('./partials/banner.ejs') %>
+
+  <main class="page-shell page-shell--centered">
+    <section class="page-card section-stack">
+      <h1 class="page-title">Error</h1>
+      <p class="page-subtitle"><%= message %></p>
+
+      <% if (error) { %>
+        <pre class="error-stack"><%= error.stack %></pre>
+      <% } %>
+
+      <div>
+        <a class="button-link" href="/">
+          <span class="button">Go Home</span>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <%- include('./partials/footer.ejs') %>
+</body>
+</html>

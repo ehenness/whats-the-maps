@@ -1,53 +1,38 @@
 <!DOCTYPE html>
 <html>
-    <head>
+<head>
+  <link rel="stylesheet" href="/stylesheets/style.css">
+</head>
+<body>
+  <%- include('./partials/banner.ejs') %>
 
-    </head>
-    <body style="background-color: antiquewhite; margin: 0;">
-        <!--Header-->
-        <%- include('./partials/banner.ejs') %>
-        <div style="display: flex; align-items: center; justify-content: space-between; margin: 5px;">
+  <main class="page-shell page-stack page-stack--wide">
+    <div class="top-bar">
+      <div class="left-section">
+        <% if (user) { %>
+          <a class="profile-pic" href="/dashboard" aria-label="Open dashboard"></a>
+          <a class="username" href="/dashboard"><%= user.username %></a>
+        <% } %>
+      </div>
 
-            <!-- LEFT SIDE (circle + username) -->
-            <div style="display: flex; align-items: center; gap: 8px;">
+      <div>
+        <% if (user) { %>
+          <a class="button-link" href="/users/logout">
+            <span class="button">Log Out</span>
+          </a>
+        <% } else { %>
+          <a class="button-link" href="/login">
+            <span class="button">Log In</span>
+          </a>
+        <% } %>
+      </div>
+    </div>
 
-                <% if (user) { %>
+    <section class="hero-blob">
+      <h1>Start a Mapch!</h1>
+    </section>
+  </main>
 
-                    <!-- Circle -->
-                    <a href="/dashboard" style="height: 30px; width: 30px; background-color: grey; border-radius: 50%;"></a>
-
-                    <!-- Username -->
-                    <a href="/dashboard" style="text-decoration: none; color: black; font-weight: bold;">
-                        <%= user.username %>
-                    </a>
-
-                <% } %>
-
-            </div>
-
-        
-            <!-- RIGHT SIDE (login/logout) -->
-            <div>
-                <% if (user) { %>
-                    <a href="/users/logout" style="text-decoration: none;">
-                        <div style="height: 30px; width: 75px; text-align: center; background-color: bisque; border-style: solid;">
-                            <h3 style="margin: 0; margin-top: 5px;">Log Out</h3>
-                        </div>
-                    </a>
-                <% } else { %>
-                    <a href="/login" style="text-decoration: none;">
-                        <div style="height: 30px; width: 75px; text-align: center; background-color: bisque; border-style: solid;">
-                            <h3 style="margin: 0; margin-top: 5px;">Log In</h3>
-                        </div>
-                    </a>
-                <% } %>
-            </div>
-        
-        </div>
-        <div class="oval" style="height: 150px; width: 350px; border-radius: 50%; background-color: aqua; transform: rotate(165deg); position: fixed; inset: 0px; width: 350px; height:150px; max-width: 100vw; max-height: 100dvh; margin: auto; display: flex; justify-content: center; align-items: center;">
-            <h1 style="transform: rotate(195deg); text-align: center;">Start a Mapch!</h1>
-        </div>
-        <!--Footer-->
-        <%- include('./partials/footer.ejs') %>
-    </body>
+  <%- include('./partials/footer.ejs') %>
+</body>
 </html>
