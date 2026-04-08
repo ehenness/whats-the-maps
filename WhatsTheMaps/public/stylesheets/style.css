@@ -495,3 +495,18 @@ a {
     width: 100%;
   }
 }
+
+.city-name-button {
+  display: block;
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  font-size: 1.17em;
+}
+
+.city-popup {
+  display: none;
+  position: absolute;
+  align-items: center;
+  justify-content: center;
+}
