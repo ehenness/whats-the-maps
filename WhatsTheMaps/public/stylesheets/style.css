@@ -253,9 +253,8 @@ a {
   align-items: center;
   justify-content: center;
   text-align: center;
-}
-
-.hero-blob h1 {
+  display: block;
+  cursor: pointer;
   margin: 0;
   font-size: clamp(2rem, 5vw, 3rem);
   letter-spacing: 0.04em;
@@ -879,4 +878,34 @@ a {
   .button-link {
     width: 100%;
   }
+}
+
+.city-name-button {
+  display: block;
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  font-size: 1.17em;
+}
+
+.city-popup {
+  display: none;
+  position: absolute;
+  align-items: center;
+  justify-content: center;
+}
+
+.back {
+  cursor: pointer;
+}
+
+.back:hover{
+  text-decoration: underline;
+}
+
+.mapch-popup {
+  display: none;
+  position: absolute;
+  align-items: center;
+  justify-content: center;
 }
