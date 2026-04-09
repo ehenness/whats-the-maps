@@ -214,12 +214,15 @@ a {
   align-items: center;
   justify-content: center;
   text-align: center;
-}
-
-.hero-blob h1 {
+  display: block;
+  cursor: pointer;
   margin: 0;
   font-size: clamp(2rem, 5vw, 3rem);
   letter-spacing: 0.04em;
+}
+
+.hero-blob:hover{
+  background: #8bdfd2;
 }
 
 .auth-layout {
@@ -505,6 +508,21 @@ a {
 }
 
 .city-popup {
+  display: none;
+  position: absolute;
+  align-items: center;
+  justify-content: center;
+}
+
+.back {
+  cursor: pointer;
+}
+
+.back:hover{
+  text-decoration: underline;
+}
+
+.mapch-popup {
   display: none;
   position: absolute;
   align-items: center;

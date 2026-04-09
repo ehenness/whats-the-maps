@@ -6,7 +6,7 @@
 <body>
   <%- include('./partials/banner.ejs') %>
 
-  <div class="city-popup" id="city-info"><%- include('./partials/popup.ejs') %></div>
+  <div class="city-popup" id="city-info"><%- include('./partials/city-popup.ejs') %></div>
 
   <main class="page-shell page-shell--centered">
     <section class="page-stack page-stack--wide">
@@ -46,7 +46,7 @@
       document.getElementById("city-button").style.display = "none";
     }
 
-    function back() {
+    function cityBack() {
       document.getElementById("city-info").style.display = "none";
       document.getElementById("city-button").style.display = "block";
     }

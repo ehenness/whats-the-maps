@@ -21,3 +21,7 @@
 
 4/7 - JoseFelix
 - fixed popup functionality and created a back button within the popup
+
+4/8 - JoseFelix
+- created mapch popup
+- changed how heroblob is used and made it a button
