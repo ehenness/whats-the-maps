@@ -8,43 +8,70 @@
 
   <main class="page-shell page-shell--centered">
     <section class="page-stack page-stack--wide">
-      <h1 class="page-title">Cities!</h1>
+      <h1 class="page-title">Cities</h1>
 
-      <div class="page-card page-card--flush">
-        <div class="cities-controls">
-          <div>Sort By: ___</div>
-          <div>Random!</div>
-        </div>
-      </div>
+      <section class="page-card section-stack">
+        <h2 class="page-title">Find a City Quiz</h2>
+
+        <form class="cities-filter-form" action="/cities" method="GET">
+          <div class="cities-controls">
+            <div class="filter-control">
+              <label class="form-label" for="state-filter">State</label>
+              <select class="form-input" id="state-filter" name="state">
+                <option value="all" <%= selectedState === 'all' ? 'selected' : '' %>>All States</option>
+                <% states.forEach((state) => { %>
+                  <option value="<%= state %>" <%= selectedState === state ? 'selected' : '' %>><%= state %></option>
+                <% }) %>
+              </select>
+            </div>
+
+            <div class="filter-control">
+              <label class="form-label" for="sort-filter">Alphabetical</label>
+              <select class="form-input" id="sort-filter" name="sort">
+                <option value="alpha-asc" <%= selectedSort === 'alpha-asc' ? 'selected' : '' %>>A to Z</option>
+                <option value="alpha-desc" <%= selectedSort === 'alpha-desc' ? 'selected' : '' %>>Z to A</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="cities-filter-actions">
+            <button class="button button-primary" type="submit">Apply Filters</button>
+            <% if (randomCity) { %>
+              <a class="button-link" href="/cities/<%= randomCity.cityId %>/game">
+                <span class="button">Random City Quiz</span>
+              </a>
+            <% } %>
+          </div>
+        </form>
+      </section>
 
       <section class="cities-list">
-        <article class="city-item">
-          <button class="city-name-button" id="test" type="button">City Name</button>
-          <p>City Information (Foundation, Country, Language)</p>
-        </article>
+        <% if (cities.length === 0) { %>
+          <section class="page-card section-stack">
+            <h2 class="page-title">No Cities Found</h2>
+            <p class="page-subtitle">Try a different state or sort option.</p>
+          </section>
+        <% } %>
 
-        <article class="city-item">
-          <h3>City Name</h3>
-          <p>City Information (Foundation, Country, Language)</p>
-        </article>
+        <% cities.forEach((city) => { %>
+          <article class="city-item">
+            <div class="city-copy">
+              <h3><%= city.cityName %></h3>
+              <p class="city-state"><%= city.state %></p>
+              <p><%= city.description %></p>
+            </div>
 
-        <article class="city-item">
-          <h3>City Name</h3>
-          <p>City Information (Foundation, Country, Language)</p>
-        </article>
+            <div class="city-actions">
+              <a class="button-link" href="/cities/<%= city.cityId %>/game">
+                <span class="button button-primary">Play Quiz</span>
+              </a>
+            </div>
+          </article>
+        <% }) %>
       </section>
     </section>
   </main>
 
   <%- include('./partials/footer.ejs') %>
-
-  <!-- Popup
-  This doesn't work, I'm trying to figure it out - JF
-
-  <div id="popup">
-    <%- include('./partials/popup.ejs') %>
-  </div>
-  <script src="/javascript/popup.js"></script>
-  -->
 </body>
 </html>

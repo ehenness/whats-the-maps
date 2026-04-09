@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title><%= city.cityName %> Quiz</title>
+  <link rel="stylesheet" href="/stylesheets/style.css">
+</head>
+<body>
+  <%- include('./partials/banner.ejs') %>
+
+  <main class="page-shell page-shell--centered">
+    <section class="page-stack page-stack--wide">
+      <section class="page-card section-stack game-card">
+        <div class="game-header">
+          <div>
+            <h1 class="page-title"><%= city.cityName %> Quiz</h1>
+            <p class="page-subtitle"><%= city.state %> · <%= quizData.questions.length %> questions · <%= Math.floor(quizData.questionTimeLimitMs / 1000) %> seconds each</p>
+          </div>
+          <div class="game-links">
+            <a class="button-link" href="/cities">
+              <span class="button">Back to Cities</span>
+            </a>
+            <% if (!user) { %>
+              <a class="button-link" href="/login">
+                <span class="button">Log In to Save Score</span>
+              </a>
+            <% } %>
+          </div>
+        </div>
+
+        <div class="game-status">
+          <div class="game-status-row">
+            <span id="game-progress">Question 1 of <%= quizData.questions.length %></span>
+            <span id="game-timer-label"><%= Math.floor(quizData.questionTimeLimitMs / 1000) %>.0s</span>
+          </div>
+          <div class="timer-track">
+            <div class="timer-fill" id="game-timer-fill"></div>
+          </div>
+        </div>
+
+        <div id="game-app">
+          <section class="question-panel">
+            <h2 id="game-question-text"></h2>
+            <div class="answer-grid" id="game-answer-grid"></div>
+          </section>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <%- include('./partials/footer.ejs') %>
+
+  <script id="quiz-data" type="application/json"><%- JSON.stringify(quizData) %></script>
+  <script id="game-meta" type="application/json"><%- JSON.stringify({
+    cityId: city.cityId,
+    submitUrl: `/cities/${city.cityId}/game/submit`,
+    dashboardUrl: '/dashboard',
+    citiesUrl: '/cities',
+    userLoggedIn: Boolean(user)
+  }) %></script>
+  <script src="/javascript/cityGame.js"></script>
+</body>
+</html>

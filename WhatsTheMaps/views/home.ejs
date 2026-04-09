@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <title>What's The Maps?</title>
   <link rel="stylesheet" href="/stylesheets/style.css">
 </head>
 <body>
@@ -10,7 +11,11 @@
     <div class="top-bar">
       <div class="left-section">
         <% if (user) { %>
-          <a class="profile-pic" href="/dashboard" aria-label="Open dashboard"></a>
+          <a class="profile-pic" href="/dashboard" aria-label="Open dashboard">
+            <% if (user.profileImageUrl) { %>
+              <img class="profile-pic__image" src="<%= user.profileImageUrl %>" alt="<%= user.username %>'s profile picture">
+            <% } %>
+          </a>
           <a class="username" href="/dashboard"><%= user.username %></a>
         <% } %>
       </div>
@@ -28,9 +33,15 @@
       </div>
     </div>
 
-    <section class="hero-blob">
-      <h1>Start a Mapch!</h1>
-    </section>
+    <% if (randomCity) { %>
+      <a class="hero-blob hero-blob-link" href="/cities/<%= randomCity.cityId %>/game" aria-label="Start a random city quiz">
+        <h1>Start a Mapch</h1>
+      </a>
+    <% } else { %>
+      <section class="hero-blob">
+        <h1>Start a Mapch</h1>
+      </section>
+    <% } %>
   </main>
 
   <%- include('./partials/footer.ejs') %>

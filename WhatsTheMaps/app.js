@@ -1,4 +1,3 @@
-// Imports
 const createError = require('http-errors');
 const express = require('express');
 const path = require('path');
@@ -7,79 +6,71 @@ const logger = require('morgan');
 const session = require('express-session');
 const db = require('./db');
 
-// Routes
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 
-// App setup
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
+const requestBodyLimit = '12mb';
+const sessionSecret = process.env.SESSION_SECRET || 'your-secret-key';
+const leaderboardSql = `
+  SELECT u.username, MAX(s.score) AS high_score
+  FROM users u
+  JOIN scores s ON u.id = s.user_id
+  WHERE u.is_deleted = FALSE
+  GROUP BY u.id
+  ORDER BY high_score DESC
+  LIMIT 10
+`;
 
-// View engine
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
-// Middleware
 app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: requestBodyLimit }));
+app.use(express.urlencoded({ extended: true, limit: requestBodyLimit }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Session
 app.use(
   session({
-    secret: 'your-secret-key', // change later?
+    secret: sessionSecret,
     resave: false,
     saveUninitialized: false
   })
 );
 
 app.use((req, res, next) => {
-  // Makes <%= user %> available in EJS templates.
   res.locals.user = req.session.user || null;
   next();
 });
 
-// Routes
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
-// Direct home route
-app.get('/', (req, res) => {
-  res.render('home');
-});
-
-// Leaderboard
 app.get('/leaderboard', (req, res) => {
-  const sql = `
-    SELECT u.username, MAX(s.score) AS high_score
-    FROM users u
-    JOIN scores s ON u.id = s.user_id
-    WHERE u.is_deleted = FALSE
-    GROUP BY u.id
-    ORDER BY high_score DESC
-    LIMIT 10
-  `;
-
-  db.query(sql, (err, results) => {
+  db.query(leaderboardSql, (err, results) => {
     if (err) {
       console.error(err);
       return res.send('Error loading leaderboard');
     }
 
-    res.render('leaderboard', { leaderboard: results });
+    return res.render('leaderboard', { leaderboard: results });
   });
 });
 
-// Error handling
-// Catch 404
 app.use((req, res, next) => {
   next(createError(404));
 });
 
-// Error handler
 app.use((err, req, res, next) => {
+  if (err.type === 'entity.too.large') {
+    res.locals.message = 'The uploaded image is too large. Please try a slightly smaller file.';
+    res.locals.error = req.app.get('env') === 'development' ? err : {};
+    res.status(413);
+    return res.render('error');
+  }
+
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
@@ -87,10 +78,8 @@ app.use((err, req, res, next) => {
   res.render('error');
 });
 
-// Start server
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
 });
 
-// Export
 module.exports = app;
