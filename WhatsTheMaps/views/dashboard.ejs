@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <title>Dashboard</title>
   <link rel="stylesheet" href="/stylesheets/style.css">
 </head>
 <body>
@@ -8,51 +9,167 @@
 
   <main class="page-shell page-shell--centered">
     <section class="page-stack page-stack--wide">
-      <div class="page-card">
-        <div class="dashboard-header">
-          <div class="profile-pic profile-pic--large">Profile Picture</div>
+      <% if (successMessage) { %>
+        <p class="message message-success"><%= successMessage %></p>
+      <% } %>
 
-          <div class="user-description">
-            <h1><%= user.username %></h1>
-            <p>Short description of the user's choosing. <br> Favorite City: ___ <br> Favorite Color: ___</p>
+      <% if (errorMessage) { %>
+        <p class="message message-error"><%= errorMessage %></p>
+      <% } %>
+
+      <% if (isEditing) { %>
+        <section class="page-card section-stack dashboard-summary-card">
+          <div class="dashboard-header">
+            <label class="profile-pic profile-pic--large profile-picture-display edit-avatar-label" for="profile-image-upload">
+              <img
+                class="profile-pic__image <%= profile.profileImageUrl ? '' : 'hidden' %>"
+                id="profile-image-preview"
+                src="<%= profile.profileImageUrl || '' %>"
+                alt="Current profile picture preview"
+              >
+              <span
+                id="profile-image-placeholder"
+                class="<%= profile.profileImageUrl ? 'hidden' : '' %>"
+              >
+                Profile Picture
+              </span>
+              <span class="edit-avatar-caption">Click to change</span>
+            </label>
+
+            <div class="user-description">
+              <h1>Edit Profile</h1>
+              <p>Choose a picture, update your bio, and save when you're ready to head back to your dashboard.</p>
+            </div>
+
+            <div class="dashboard-actions">
+              <a class="button-link" href="/dashboard">
+                <span class="button">Cancel</span>
+              </a>
+              <a class="button-link" href="/users/logout">
+                <span class="button">Log Out</span>
+              </a>
+            </div>
           </div>
-
-          <a class="button-link" href="/users/logout">
-            <span class="button">Log Out</span>
-          </a>
-        </div>
-      </div>
-
-      <div class="stats-grid">
-        <section class="stats-card">
-          <h3>Your Stats</h3>
-          <p>Quizzes Played: __ <br> Questions Correct: __ <br> Your Rank: __</p>
         </section>
 
-        <section class="stats-card">
-          <h3>Global Stats</h3>
-          <p>Quizzes Played: __ <br> Questions Correct: __ <br> Best Rank: __</p>
+        <section class="page-card section-stack">
+          <h2 class="page-title">Profile Settings</h2>
+
+          <form class="settings-form" action="/users/update-profile" method="POST">
+            <div class="settings-section">
+              <h3>Choose a Profile Picture</h3>
+
+              <% if (presetAvatars.length > 0) { %>
+                <div class="avatar-picker">
+                  <% presetAvatars.forEach((avatarPath) => { %>
+                    <label class="avatar-option">
+                      <input
+                        type="radio"
+                        name="selectedAvatar"
+                        value="<%= avatarPath %>"
+                        <%= profile.profileImageUrl === avatarPath ? 'checked' : '' %>
+                      >
+                      <span class="avatar-swatch">
+                        <img src="<%= avatarPath %>" alt="Preset avatar option">
+                      </span>
+                    </label>
+                  <% }) %>
+                </div>
+              <% } else { %>
+                <p class="settings-note">No preset pictures found yet.</p>
+              <% } %>
+
+              <input class="file-input-hidden" id="profile-image-upload" type="file" accept="image/*">
+              <input id="uploaded-image-data" name="uploadedImageData" type="hidden">
+            </div>
+
+            <div class="settings-section">
+              <h3>Edit Your Bio</h3>
+              <div class="form-group">
+                <label class="form-label" for="bio">Tell other players about yourself</label>
+                <textarea class="form-input form-textarea" id="bio" name="bio" maxlength="500"><%= profile.bio %></textarea>
+              </div>
+            </div>
+
+            <div class="settings-actions">
+              <button class="button button-primary" type="submit">Save Changes</button>
+              <a class="button-link" href="/dashboard">
+                <span class="button">Back to Dashboard</span>
+              </a>
+            </div>
+          </form>
         </section>
-      </div>
 
-      <section class="page-card section-stack">
-        <h2 class="page-title">Account Settings</h2>
+        <section class="page-card section-stack">
+          <h2 class="page-title">Danger Zone</h2>
+          <form class="delete-account-form" action="/users/delete-account" method="POST">
+            <label class="form-label" for="delete-password">Confirm your password to delete your account</label>
+            <div class="form-inline">
+              <input class="form-input" id="delete-password" name="password" type="password" required>
+              <button
+                class="button button-danger"
+                type="submit"
+                onclick="return confirm('Are you sure you want to delete your account? This cannot be undone.')"
+              >
+                Delete Account
+              </button>
+            </div>
+          </form>
+        </section>
+      <% } else { %>
+        <section class="page-card section-stack dashboard-summary-card">
+          <div class="dashboard-header">
+            <div class="profile-pic profile-pic--large profile-picture-display">
+              <% if (profile.profileImageUrl) { %>
+                <img
+                  class="profile-pic__image"
+                  src="<%= profile.profileImageUrl %>"
+                  alt="<%= profile.username %>'s profile picture"
+                >
+              <% } else { %>
+                Profile Picture
+              <% } %>
+            </div>
 
-        <form class="form-inline" action="/users/delete-account" method="POST">
-          <label class="form-label" for="delete-password">Confirm with your password:</label>
-          <input class="form-input" id="delete-password" name="password" type="password" required>
-          <button
-            class="button button-danger"
-            type="submit"
-            onclick="return confirm('Are you sure you want to delete your account? This cannot be undone.')"
-          >
-            Delete Account
-          </button>
-        </form>
-      </section>
+            <div class="user-description">
+              <h1><%= profile.username %></h1>
+              <p>
+                <%= profile.bio || 'Add your bio and choose a profile picture in edit mode.' %>
+              </p>
+            </div>
+
+            <div class="dashboard-actions">
+              <a class="button-link" href="/dashboard?edit=1">
+                <span class="button button-primary">Edit Profile</span>
+              </a>
+              <a class="button-link" href="/users/logout">
+                <span class="button">Log Out</span>
+              </a>
+            </div>
+          </div>
+        </section>
+
+        <section class="page-card section-stack">
+          <h2 class="page-title">Your Stats</h2>
+          <div class="dashboard-copy">
+            <p>Quizzes Played: <%= stats.quizzesPlayed %></p>
+            <p>Total Points Earned: <%= stats.totalPoints %></p>
+            <p>Best Score: <%= stats.bestScore %></p>
+            <p>Average Score: <%= stats.averageScore %></p>
+            <p>
+              Highest Leaderboard Rank:
+              <%= stats.highestLeaderboardRank ? `#${stats.highestLeaderboardRank}` : 'Not ranked yet' %>
+            </p>
+          </div>
+        </section>
+      <% } %>
     </section>
   </main>
 
   <%- include('./partials/footer.ejs') %>
+
+  <% if (isEditing) { %>
+    <script src="/javascript/dashboard.js"></script>
+  <% } %>
 </body>
 </html>

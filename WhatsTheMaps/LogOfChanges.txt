@@ -19,6 +19,11 @@
 - edited how footer looks slightly --> no bullet points, only underlines link on hover
 - edited style sheet for better consistency when making/editing pages (had AI help with this)
 
+4/8 - Emma
+- started with actual game creation/implementation
+- added pre-set profile pic options
+- users can upload their own image for profile pic
+- gameplay! questions and answers generate from stored data in DB
 4/7 - JoseFelix
 - fixed popup functionality and created a back button within the popup
 
