@@ -9,7 +9,7 @@
 
   <div class="mapch-popup" id="mapch-popup"><%- include('./partials/mapch-popup.ejs') %></div>
 
-  <main class="page-shell page-stack page-stack--wide">
+  <main class="page-shell page-stack page-stack--wide home-shell">
     <div class="top-bar">
       <div class="left-section">
         <% if (user) { %>
@@ -35,15 +35,17 @@
       </div>
     </div>
 
-    <% if (randomCity) { %>
-      <a class="hero-blob hero-blob-link" href="/cities/<%= randomCity.cityId %>/game" aria-label="Start a random city quiz">
-        <h1>Start a Mapch</h1>
-      </a>
-    <% } else { %>
-      <section class="hero-blob">
-        <h1>Start a Mapch</h1>
-      </section>
-    <% } %>
+    <div class="home-hero">
+      <% if (randomCity) { %>
+        <a class="hero-blob hero-blob-link" href="/cities/<%= randomCity.cityId %>/game" aria-label="Start a random city quiz">
+          <h1>Start a Mapch!</h1>
+        </a>
+      <% } else { %>
+        <section class="hero-blob">
+          <h1>Start a Mapch!</h1>
+        </section>
+      <% } %>
+    </div>
   </main>
 
   <%- include('./partials/footer.ejs') %>

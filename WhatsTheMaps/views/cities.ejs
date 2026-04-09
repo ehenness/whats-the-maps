@@ -58,7 +58,19 @@
         <% cities.forEach((city) => { %>
           <article class="city-item">
             <div class="city-copy">
-              <h3><%= city.cityName %></h3>
+              <div class="city-name-wrap">
+                <h3 class="city-name"><%= city.cityName %></h3>
+                <% if (city.cityInfo && city.cityInfo.length > 0) { %>
+                  <div class="city-hover-card" role="tooltip">
+                    <p class="city-hover-title"><%= city.cityName %>, <%= city.state %></p>
+                    <% city.cityInfo.forEach((info) => { %>
+                      <p class="city-hover-line">
+                        <strong><%= info.label %>:</strong> <%= info.value %>
+                      </p>
+                    <% }) %>
+                  </div>
+                <% } %>
+              </div>
               <p class="city-state"><%= city.state %></p>
               <p><%= city.description %></p>
             </div>

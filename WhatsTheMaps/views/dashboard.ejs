@@ -132,25 +132,36 @@
             </div>
 
             <div class="user-description">
-              <h1><%= profile.username %></h1>
+              <h1><%= isReadOnlyProfile ? `${profile.username}'s Profile` : profile.username %></h1>
               <p>
-                <%= profile.bio || 'Add your bio and choose a profile picture in edit mode.' %>
+                <%= profile.bio || (isReadOnlyProfile ? 'No bio added yet.' : 'Add your bio and choose a profile picture in edit mode.') %>
               </p>
             </div>
 
             <div class="dashboard-actions">
-              <a class="button-link" href="/dashboard?edit=1">
-                <span class="button button-primary">Edit Profile</span>
-              </a>
-              <a class="button-link" href="/users/logout">
-                <span class="button">Log Out</span>
-              </a>
+              <% if (isReadOnlyProfile) { %>
+                <a class="button-link" href="/leaderboard">
+                  <span class="button">Back to Leaderboard</span>
+                </a>
+                <% if (user) { %>
+                  <a class="button-link" href="/dashboard">
+                    <span class="button button-primary">My Dashboard</span>
+                  </a>
+                <% } %>
+              <% } else { %>
+                <a class="button-link" href="/dashboard?edit=1">
+                  <span class="button button-primary">Edit Profile</span>
+                </a>
+                <a class="button-link" href="/users/logout">
+                  <span class="button">Log Out</span>
+                </a>
+              <% } %>
             </div>
           </div>
         </section>
 
         <section class="page-card section-stack">
-          <h2 class="page-title">Your Stats</h2>
+          <h2 class="page-title"><%= isReadOnlyProfile ? 'Player Stats' : 'Your Stats' %></h2>
           <div class="dashboard-copy">
             <p>Quizzes Played: <%= stats.quizzesPlayed %></p>
             <p>Total Points Earned: <%= stats.totalPoints %></p>

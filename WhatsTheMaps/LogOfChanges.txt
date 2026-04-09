@@ -31,3 +31,5 @@
 - added pre-set profile pic options
 - users can upload their own image for profile pic
 - gameplay! questions and answers generate from stored data in DB
+- fixed pop ups (I accidentally fucked them up during a merge, sorry JF)
+- made other users profiles viewable

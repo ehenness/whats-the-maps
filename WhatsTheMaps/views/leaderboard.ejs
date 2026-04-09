@@ -23,11 +23,18 @@
             </tr>
           </thead>
           <tbody>
-            <% leaderboard.forEach((user, index) => { %>
+            <% leaderboard.forEach((entry, index) => { %>
               <tr>
                 <td><%= index + 1 %></td>
-                <td><%= user.username %></td>
-                <td><%= user.high_score %></td>
+                <td>
+                  <a
+                    class="username"
+                    href="<%= Number(entry.user_id) === Number(locals.user?.id) ? '/dashboard' : `/players/${entry.user_id}` %>"
+                  >
+                    <%= entry.username %>
+                  </a>
+                </td>
+                <td><%= entry.high_score %></td>
               </tr>
             <% }) %>
           </tbody>
