@@ -6,6 +6,8 @@
 <body>
   <%- include('./partials/banner.ejs') %>
 
+  <div class="mapch-popup" id="mapch-popup"><%- include('./partials/mapch-popup.ejs') %></div>
+
   <main class="page-shell page-stack page-stack--wide">
     <div class="top-bar">
       <div class="left-section">
@@ -28,11 +30,21 @@
       </div>
     </div>
 
-    <section class="hero-blob">
-      <h1>Start a Mapch!</h1>
-    </section>
+    <button class="hero-blob" id="mapch-button" onclick="mapchPopup()">Start a Mapch!</button>
   </main>
 
   <%- include('./partials/footer.ejs') %>
+
+  <script>
+    function mapchPopup() {
+      document.getElementById("mapch-popup").style.display = "block";
+      document.getElementById("mapch-button").style.display = "none";
+    }
+
+    function mapchBack() {
+      document.getElementById("mapch-popup").style.display = "none";
+      document.getElementById("mapch-button").style.display = "block";
+    }
+  </script>
 </body>
 </html>
