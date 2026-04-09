@@ -112,6 +112,29 @@ function getDashboardStats(userId) {
   });
 }
 
+async function getDashboardProfile(userId) {
+  const dashboardSql = 'SELECT id, username FROM users WHERE id = ? AND is_deleted = FALSE';
+  const results = await runQuery(dashboardSql, [userId]);
+
+  if (results.length === 0) {
+    return null;
+  }
+
+  const dashboardUser = results[0];
+  const storedProfile = getStoredProfile(userId) || {};
+  const stats = await getDashboardStats(userId);
+
+  return {
+    profile: {
+      userId: Number(dashboardUser.id),
+      username: dashboardUser.username,
+      bio: storedProfile.bio || '',
+      profileImageUrl: storedProfile.profileImageUrl || null
+    },
+    stats
+  };
+}
+
 router.get('/', async (req, res) => {
   try {
     return res.render('home', {
@@ -135,33 +158,62 @@ router.get('/login', (req, res) => {
 
 router.get('/dashboard', isAuthenticated, async (req, res) => {
   const isEditing = req.query.edit === '1';
-  const dashboardSql = 'SELECT username, email FROM users WHERE id = ? AND is_deleted = FALSE';
   try {
-    const results = await runQuery(dashboardSql, [req.session.user.id]);
-    if (results.length === 0) {
+    const dashboardData = await getDashboardProfile(req.session.user.id);
+
+    if (!dashboardData) {
       return res.redirect('/login');
     }
 
-    const dashboardUser = results[0];
-    const storedProfile = getStoredProfile(req.session.user.id) || {};
     const presetAvatars = listPresetProfileImages();
-    const stats = await getDashboardStats(req.session.user.id);
 
     return res.render('dashboard', {
       isEditing,
-      profile: {
-        username: dashboardUser.username,
-        bio: storedProfile.bio || '',
-        profileImageUrl: storedProfile.profileImageUrl || null
-      },
+      isReadOnlyProfile: false,
+      isOwnProfile: true,
+      profile: dashboardData.profile,
       presetAvatars,
-      stats,
+      stats: dashboardData.stats,
       successMessage: req.query.updated === '1' ? 'Profile updated.' : null,
       errorMessage: dashboardErrorMessages[req.query.error] || null
     });
   } catch (error) {
     console.error(error);
     return res.status(500).send('Error loading dashboard.');
+  }
+});
+
+router.get('/players/:userId', async (req, res) => {
+  const requestedUserId = Number(req.params.userId);
+
+  if (!Number.isInteger(requestedUserId) || requestedUserId <= 0) {
+    return res.status(404).send('Player not found.');
+  }
+
+  if (req.session.user && Number(req.session.user.id) === requestedUserId) {
+    return res.redirect('/dashboard');
+  }
+
+  try {
+    const dashboardData = await getDashboardProfile(requestedUserId);
+
+    if (!dashboardData) {
+      return res.status(404).send('Player not found.');
+    }
+
+    return res.render('dashboard', {
+      isEditing: false,
+      isReadOnlyProfile: true,
+      isOwnProfile: false,
+      profile: dashboardData.profile,
+      presetAvatars: [],
+      stats: dashboardData.stats,
+      successMessage: null,
+      errorMessage: null
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send('Error loading player profile.');
   }
 });
 

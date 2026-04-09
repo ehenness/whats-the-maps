@@ -129,6 +129,52 @@ function buildCityDescription(city, facts = []) {
   return `Play a quiz built from real facts about ${city.cityName}.`;
 }
 
+function getFactLabel(factTypeName) {
+  const labels = {
+    founding_year: 'Founded',
+    elevation: 'Elevation',
+    population: 'Population',
+    tallest_structure: 'Tallest Structure',
+    nearest_boarder: 'Nearest Border',
+    nearest_border: 'Nearest Border',
+    fun_fact: 'Nickname',
+    nickname: 'Nickname'
+  };
+
+  return labels[factTypeName] || factTypeName.replaceAll('_', ' ');
+}
+
+function buildCityInfo(facts = []) {
+  const factOrder = [
+    'nickname',
+    'fun_fact',
+    'population',
+    'founding_year',
+    'elevation',
+    'tallest_structure',
+    'nearest_border',
+    'nearest_boarder'
+  ];
+
+  return factOrder
+    .map((factTypeName) => facts.find((fact) => fact.factTypeName === factTypeName))
+    .filter(Boolean)
+    .reduce((info, fact) => {
+      const label = getFactLabel(fact.factTypeName);
+
+      if (info.some((entry) => entry.label === label)) {
+        return info;
+      }
+
+      info.push({
+        label,
+        value: fact.answerText
+      });
+
+      return info;
+    }, []);
+}
+
 function normalizeFactRows(rows) {
   return rows
     .map((row) => {
@@ -278,7 +324,8 @@ async function getCities({ state = 'all', sort = 'alpha-asc' } = {}) {
 
   const citiesWithDescriptions = filteredCities.map((city) => ({
     ...city,
-    description: buildCityDescription(city, factsByCityId.get(city.cityId) || [])
+    description: buildCityDescription(city, factsByCityId.get(city.cityId) || []),
+    cityInfo: buildCityInfo(factsByCityId.get(city.cityId) || [])
   }));
 
   citiesWithDescriptions.sort((left, right) => {

@@ -14,7 +14,7 @@ const port = process.env.PORT || 3000;
 const requestBodyLimit = '12mb';
 const sessionSecret = process.env.SESSION_SECRET || 'your-secret-key';
 const leaderboardSql = `
-  SELECT u.username, MAX(s.score) AS high_score
+  SELECT u.id AS user_id, u.username, MAX(s.score) AS high_score
   FROM users u
   JOIN scores s ON u.id = s.user_id
   WHERE u.is_deleted = FALSE
