@@ -33,3 +33,6 @@
 - gameplay! questions and answers generate from stored data in DB
 - fixed pop ups (I accidentally fucked them up during a merge, sorry JF)
 - made other users profiles viewable
+
+4/10 - JoseFelix
+- made footer into a navigation bar

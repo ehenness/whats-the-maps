@@ -726,11 +726,7 @@ a {
 }
 
 .site-footer {
-  position: fixed;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  border-top: 2px solid var(--color-border);
+  border-bottom: 2px solid var(--color-border);
   background-color: var(--color-footer);
 }
 
@@ -740,7 +736,7 @@ a {
   gap: 48px;
   width: min(960px, 100%);
   margin: 0 auto;
-  padding: 14px 24px;
+  padding: 10px;
 }
 
 .footer-column {
