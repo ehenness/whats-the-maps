@@ -36,3 +36,6 @@
 
 4/10 - JoseFelix
 - made footer into a navigation bar
+
+4/20 - JoseFelix
+- deleted "city-popup.ejs" and "mapch-popup.ejs" and any references to them
