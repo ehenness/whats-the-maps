@@ -7,6 +7,8 @@
 <body>
   <%- include('./partials/banner.ejs') %>
 
+  <%- include('./partials/footer.ejs') %>
+
   <main class="page-shell page-shell--centered">
     <section class="page-stack page-stack--wide">
       <% if (successMessage) { %>
@@ -176,8 +178,6 @@
       <% } %>
     </section>
   </main>
-
-  <%- include('./partials/footer.ejs') %>
 
   <% if (isEditing) { %>
     <script src="/javascript/dashboard.js"></script>
