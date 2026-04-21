@@ -1,9 +1,11 @@
+/** Reads and writes JSON store for profile bios and avatars */
 const fs = require('fs');
 const path = require('path');
 
 const dataDirectory = path.join(__dirname, 'data');
 const profileStorePath = path.join(dataDirectory, 'userProfiles.json');
 
+// Keep saved profile data in consistent shape before reading/writing it
 function normalizeProfile(profile = {}) {
   return {
     bio: typeof profile.bio === 'string' ? profile.bio : '',
@@ -11,6 +13,7 @@ function normalizeProfile(profile = {}) {
   };
 }
 
+// Create backing directory and file on demand for local development
 function ensureStoreFile() {
   if (!fs.existsSync(dataDirectory)) {
     fs.mkdirSync(dataDirectory, { recursive: true });
@@ -21,6 +24,7 @@ function ensureStoreFile() {
   }
 }
 
+// Read whole store
 function readStore() {
   try {
     ensureStoreFile();
@@ -33,6 +37,7 @@ function readStore() {
   }
 }
 
+// Persist full profile store back to disk after updates
 function writeStore(store) {
   try {
     ensureStoreFile();

@@ -1,9 +1,11 @@
+/** Dashboard avatar picker and local profile image preview */
 const avatarUploadInput = document.getElementById('profile-image-upload');
 const avatarDataInput = document.getElementById('uploaded-image-data');
 const avatarPreview = document.getElementById('profile-image-preview');
 const avatarPlaceholder = document.getElementById('profile-image-placeholder');
 const avatarRadios = Array.from(document.querySelectorAll('input[name="selectedAvatar"]'));
 
+// Show currently selected avatar source in the profile preview circle
 function showPreviewImage(imageUrl) {
   if (!avatarPreview) {
     return;
@@ -14,6 +16,7 @@ function showPreviewImage(imageUrl) {
   avatarPlaceholder?.classList.add('hidden');
 }
 
+// Clear uploaded image state when user switches back to preset avatars
 function resetUploadField() {
   if (avatarUploadInput) {
     avatarUploadInput.value = '';
@@ -30,6 +33,7 @@ function clearSelectedPreset() {
   });
 }
 
+// Convert uploaded files to data URLs
 function handleUploadChange() {
   const [file] = avatarUploadInput.files || [];
 
@@ -65,6 +69,7 @@ function handleUploadChange() {
   reader.readAsDataURL(file);
 }
 
+// Preset avatar changes replace uploaded image selection
 function handlePresetChange(radio) {
   if (!radio.checked) {
     return;
@@ -74,6 +79,7 @@ function handlePresetChange(radio) {
   showPreviewImage(radio.value);
 }
 
+// Listeners only on editable dashboard page
 function initializeAvatarPicker() {
   if (!avatarUploadInput || !avatarDataInput || !avatarPreview) {
     return;
