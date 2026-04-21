@@ -1,3 +1,4 @@
+<%# Renders the player dashboard in profile-view or profile-edit mode %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -5,12 +6,14 @@
   <link rel="stylesheet" href="/stylesheets/style.css">
 </head>
 <body>
+  <%# Shared site chrome appears on every page %>
   <%- include('./partials/banner.ejs') %>
 
   <%- include('./partials/footer.ejs') %>
 
   <main class="page-shell page-shell--centered">
     <section class="page-stack page-stack--wide">
+      <%# Flash messages confirm profile updates or explain failures %>
       <% if (successMessage) { %>
         <p class="message message-success"><%= successMessage %></p>
       <% } %>
@@ -20,6 +23,7 @@
       <% } %>
 
       <% if (isEditing) { %>
+        <%# Edit mode for changing avatar, bio, and account settings %>
         <section class="page-card section-stack dashboard-summary-card">
           <div class="dashboard-header">
             <label class="profile-pic profile-pic--large profile-picture-display edit-avatar-label" for="profile-image-upload">
@@ -57,6 +61,7 @@
         <section class="page-card section-stack">
           <h2 class="page-title">Profile Settings</h2>
 
+          <%# Settings form supports preset avatars, uploaded images, short bio %>
           <form class="settings-form" action="/users/update-profile" method="POST">
             <div class="settings-section">
               <h3>Choose a Profile Picture</h3>
@@ -104,6 +109,7 @@
 
         <section class="page-card section-stack">
           <h2 class="page-title">Danger Zone</h2>
+          <%# Account deletion requires password confirmation before the server applies it %>
           <form class="delete-account-form" action="/users/delete-account" method="POST">
             <label class="form-label" for="delete-password">Confirm your password to delete your account</label>
             <div class="form-inline">
@@ -119,6 +125,7 @@
           </form>
         </section>
       <% } else { %>
+        <%# Read-only mode shows profile summary and lifetime player stats %>
         <section class="page-card section-stack dashboard-summary-card">
           <div class="dashboard-header">
             <div class="profile-pic profile-pic--large profile-picture-display">
@@ -180,6 +187,7 @@
   </main>
 
   <% if (isEditing) { %>
+    <%# Avatar upload previews only run on editable dashboard %>
     <script src="/javascript/dashboard.js"></script>
   <% } %>
 </body>

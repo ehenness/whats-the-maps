@@ -1,7 +1,10 @@
+/** Handles account sign-up, login, logout, profile updates, deletion */
+
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
-const db = require('../db');
+const runQuery = require('../lib/runQuery');
+const { requireSessionUser } = require('../middleware/auth');
 const {
   listPresetProfileImages,
   maxBioLength,
@@ -12,20 +15,10 @@ const {
   getStoredProfile,
   saveStoredProfile
 } = require('../profileStore');
+const { buildSessionUser } = require('../services/sessionUser');
+const { buildLoginViewModel } = require('../viewModels/authViewModels');
 
-function runQuery(sql, params = []) {
-  return new Promise((resolve, reject) => {
-    db.query(sql, params, (error, results) => {
-      if (error) {
-        reject(error);
-        return;
-      }
-
-      resolve(results);
-    });
-  });
-}
-
+// Deleting an account logs user out
 function destroySession(req) {
   return new Promise((resolve, reject) => {
     req.session.destroy((error) => {
@@ -39,10 +32,12 @@ function destroySession(req) {
   });
 }
 
+// Trim text inputs
 function trimString(value) {
   return typeof value === 'string' ? value.trim() : '';
 }
 
+// Accept preset avatar path or an uploaded data URL
 function getProfileImageFromRequest(req) {
   const selectedAvatar = trimString(req.body.selectedAvatar);
   const uploadedImageData = trimString(req.body.uploadedImageData);
@@ -66,18 +61,11 @@ function getProfileImageFromRequest(req) {
   return { profileImageUrl: req.session.user.profileImageUrl || null };
 }
 
-function isAuthenticated(req, res, next) {
-  if (req.session.user) {
-    return next();
-  }
-
-  return res.status(401).send('You must be logged in to manage your account.');
-}
-
 router.post('/signup', async (req, res) => {
   const { username, email, password } = req.body;
 
   try {
+    // Passwords are stored as bcrypt hashes before the user record is saved
     const hashedPassword = await bcrypt.hash(password, 10);
     const sql = 'INSERT INTO users (username, email, password) VALUES (?, ?, ?)';
 
@@ -104,10 +92,13 @@ router.post('/login', async (req, res) => {
     const results = await runQuery(sql, [email]);
 
     if (results.length === 0) {
-      return res.status(401).render('login', {
-        errorMessage: invalidCredentialsMessage,
-        email
-      });
+      return res.status(401).render(
+        'login',
+        buildLoginViewModel({
+          errorMessage: invalidCredentialsMessage,
+          email
+        })
+      );
     }
 
     const user = results[0];
@@ -115,19 +106,17 @@ router.post('/login', async (req, res) => {
     const passwordMatches = await bcrypt.compare(password, user.password);
 
     if (!passwordMatches) {
-      return res.status(401).render('login', {
-        errorMessage: invalidCredentialsMessage,
-        email
-      });
+      return res.status(401).render(
+        'login',
+        buildLoginViewModel({
+          errorMessage: invalidCredentialsMessage,
+          email
+        })
+      );
     }
 
-    req.session.user = {
-      id: user.id,
-      username: user.username,
-      email: user.email,
-      bio: storedProfile.bio || '',
-      profileImageUrl: storedProfile.profileImageUrl || null
-    };
+    // Keep only the fields the app needs in the session object
+    req.session.user = buildSessionUser(user, storedProfile);
 
     return res.redirect('/');
   } catch (error) {
@@ -146,7 +135,7 @@ router.get('/logout', (req, res) => {
   });
 });
 
-router.post('/update-profile', isAuthenticated, (req, res) => {
+router.post('/update-profile', requireSessionUser, (req, res) => {
   const bio = trimString(req.body.bio).slice(0, maxBioLength);
   const profileImage = getProfileImageFromRequest(req);
 
@@ -154,6 +143,7 @@ router.post('/update-profile', isAuthenticated, (req, res) => {
     return res.redirect('/dashboard?edit=1&error=image');
   }
 
+  // Save profile fields both in the session and in the JSON profile store
   req.session.user = {
     ...req.session.user,
     bio,
@@ -172,7 +162,7 @@ router.post('/update-profile', isAuthenticated, (req, res) => {
   return res.redirect('/dashboard?updated=1');
 });
 
-router.post('/delete-account', isAuthenticated, async (req, res) => {
+router.post('/delete-account', requireSessionUser, async (req, res) => {
   const userId = req.session.user.id;
   const { password } = req.body;
 

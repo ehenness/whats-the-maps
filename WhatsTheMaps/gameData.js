@@ -1,4 +1,5 @@
-const db = require('./db');
+/** Builds quiz data, formats city facts, calculates quiz results */
+const runQuery = require('./lib/runQuery');
 
 const QUESTION_TIME_LIMIT_MS = 15_000;
 const MAX_BASE_SCORE = 1_000;
@@ -7,6 +8,7 @@ const MAX_STREAK = 5;
 const STREAK_BONUS_STEP = 5;
 const ANSWERS_PER_QUESTION = 4;
 
+// Prompt builders live near quiz rules so content wording is easy to maintain
 const questionPrompts = {
   'founding_year:number': (city) => `In what year was ${city.cityName} founded?`,
   'elevation:number': (city) => `What is the elevation of ${city.cityName}?`,
@@ -19,19 +21,6 @@ const questionPrompts = {
   'nickname:text': (city) => `Which nickname is associated with ${city.cityName}?`
 };
 
-function runQuery(sql, params = []) {
-  return new Promise((resolve, reject) => {
-    db.query(sql, params, (error, results) => {
-      if (error) {
-        reject(error);
-        return;
-      }
-
-      resolve(results);
-    });
-  });
-}
-
 function shuffle(items) {
   const copy = [...items];
 
@@ -43,6 +32,7 @@ function shuffle(items) {
   return copy;
 }
 
+// Split available points evenly
 function splitScorePool(totalPoints, itemsCount) {
   if (itemsCount <= 0) {
     return [];
@@ -81,6 +71,7 @@ function formatNumber(value) {
   return Number.isInteger(value) ? value.toLocaleString('en-US') : value.toLocaleString('en-US');
 }
 
+// Normalize raw database values into readable answer text for quiz UI
 function formatFactValue(fact) {
   if (fact.dataType === 'number') {
     const numericValue = normalizeNumber(fact.valueNumber);
@@ -175,6 +166,7 @@ function buildCityInfo(facts = []) {
     }, []);
 }
 
+// Turn fact rows into stable structure for quiz builder
 function normalizeFactRows(rows) {
   return rows
     .map((row) => {
@@ -205,6 +197,7 @@ function normalizeFactRows(rows) {
     .filter(Boolean);
 }
 
+// Pull all saved facts once so quiz generation can mix real answers with distractors
 async function getAllFacts() {
   const sql = `
     SELECT
@@ -240,6 +233,7 @@ async function getCityRows() {
   }));
 }
 
+// Quiz questions use matching fact types from other cities as distractor answers
 function buildQuestionForFact(targetFact, allFacts) {
   const distractorPool = allFacts.filter(
     (fact) =>
@@ -285,6 +279,7 @@ function buildQuestionForFact(targetFact, allFacts) {
   };
 }
 
+// Browser only needs public question data, not the correct answers
 function toClientQuiz(quiz) {
   return {
     city: quiz.city,
@@ -305,6 +300,7 @@ async function getStates() {
   );
 }
 
+// City listing pages reuse same fact data for descriptions/hover details
 async function getCities({ state = 'all', sort = 'alpha-asc' } = {}) {
   const [cities, facts] = await Promise.all([getCityRows(), getAllFacts()]);
   const factsByCityId = facts.reduce((lookup, fact) => {
@@ -370,6 +366,7 @@ async function buildQuizForCity(cityId) {
   };
 }
 
+// Build scoring breakdown
 async function calculateQuizResult(cityId, responses = []) {
   const quiz = await buildQuizForCity(cityId);
 

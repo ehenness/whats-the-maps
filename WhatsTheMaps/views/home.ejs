@@ -1,3 +1,4 @@
+<%# Renders home page with account shortcuts and a random-city quiz entry point %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -5,11 +6,13 @@
   <link rel="stylesheet" href="/stylesheets/style.css">
 </head>
 <body>
+  <%# Shared site chrome appears on every page %>
   <%- include('./partials/banner.ejs') %>
 
   <%- include('./partials/footer.ejs') %>
 
   <main class="page-shell page-stack page-stack--wide home-shell">
+    <%# Top bar shows account controls when player is signed in %>
     <div class="top-bar">
       <div class="left-section">
         <% if (user) { %>
@@ -35,6 +38,7 @@
       </div>
     </div>
 
+    <%# The hero links directly into a random quiz %>
     <div class="home-hero">
       <% if (randomCity) { %>
         <a class="hero-blob hero-blob-link" href="/cities/<%= randomCity.cityId %>/game" aria-label="Start a random city quiz">

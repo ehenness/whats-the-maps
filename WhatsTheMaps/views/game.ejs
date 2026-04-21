@@ -1,3 +1,4 @@
+<%# Renders a quiz page and embeds the JSON payload used by the client-side game script %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -5,6 +6,7 @@
   <link rel="stylesheet" href="/stylesheets/style.css">
 </head>
 <body>
+  <%# Shared site chrome appears on every page. %>
   <%- include('./partials/banner.ejs') %>
 
   <%- include('./partials/footer.ejs') %>
@@ -12,6 +14,7 @@
   <main class="page-shell page-shell--centered">
     <section class="page-stack page-stack--wide">
       <section class="page-card section-stack game-card">
+        <%# Header gives quiz context and navigation back to the city list %>
         <div class="game-header">
           <div>
             <h1 class="page-title"><%= city.cityName %> Quiz</h1>
@@ -29,6 +32,7 @@
           </div>
         </div>
 
+        <%# Timer and progress labels update live quiz runs %>
         <div class="game-status">
           <div class="game-status-row">
             <span id="game-progress">Question 1 of <%= quizData.questions.length %></span>
@@ -49,6 +53,7 @@
     </section>
   </main>
 
+  <%# Page embeds quiz data as JSON %>
   <script id="quiz-data" type="application/json"><%- JSON.stringify(quizData) %></script>
   <script id="game-meta" type="application/json"><%- JSON.stringify({
     cityId: city.cityId,

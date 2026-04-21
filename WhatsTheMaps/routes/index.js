@@ -1,8 +1,11 @@
+/** Handles public page routes, city browsing, game pages, quiz submission */
 const express = require('express');
 const router = express.Router();
-const db = require('../db');
+const runQuery = require('../lib/runQuery');
+const { redirectToLogin } = require('../middleware/auth');
 const { listPresetProfileImages } = require('../profileConfig');
-const { getStoredProfile } = require('../profileStore');
+const { dashboardErrorMessages, getDashboardProfile } = require('../services/dashboardService');
+const { buildLoginViewModel } = require('../viewModels/authViewModels');
 const {
   buildQuizForCity,
   calculateQuizResult,
@@ -12,129 +15,7 @@ const {
   toClientQuiz
 } = require('../gameData');
 
-const dashboardErrorMessages = {
-  image: 'That image could not be saved. Try a smaller file or image dimensions.',
-  update: 'We could not save your profile changes.',
-  user: 'We could not find that account.'
-};
-
-function isAuthenticated(req, res, next) {
-  if (req.session.user) {
-    return next();
-  }
-
-  return res.redirect('/login');
-}
-
-function runQuery(sql, params = []) {
-  return new Promise((resolve, reject) => {
-    db.query(sql, params, (error, results) => {
-      if (error) {
-        reject(error);
-        return;
-      }
-
-      resolve(results);
-    });
-  });
-}
-
-function calculateHighestLeaderboardRank(userId, scoreHistory = []) {
-  const bestScoreByUser = new Map();
-  let highestRank = null;
-
-  scoreHistory.forEach((entry) => {
-    const entryUserId = Number(entry.userId);
-    const score = Number(entry.score) || 0;
-    const previousBest = bestScoreByUser.get(entryUserId) || 0;
-
-    if (score <= previousBest) {
-      return;
-    }
-
-    bestScoreByUser.set(entryUserId, score);
-
-    if (entryUserId !== Number(userId)) {
-      return;
-    }
-
-    const rank =
-      1 +
-      [...bestScoreByUser.entries()].filter(
-        ([otherUserId, otherUserBest]) => otherUserId !== entryUserId && otherUserBest > score
-      ).length;
-
-    highestRank = highestRank === null ? rank : Math.min(highestRank, rank);
-  });
-
-  return highestRank;
-}
-
-function getDashboardStats(userId) {
-  const userStatsSql = `
-    SELECT
-      COUNT(*) AS quizzesPlayed,
-      COALESCE(SUM(score), 0) AS totalPoints,
-      COALESCE(MAX(score), 0) AS bestScore,
-      COALESCE(AVG(score), 0) AS averageScore
-    FROM scores
-    WHERE user_id = ?
-  `;
-  const scoreHistorySql = `
-    SELECT
-      s.user_id AS userId,
-      s.score AS score
-    FROM users u
-    JOIN scores s ON u.id = s.user_id
-    WHERE u.is_deleted = FALSE
-    ORDER BY s.played_at ASC, s.id ASC
-  `;
-
-  return Promise.all([
-    runQuery(userStatsSql, [userId]).catch((error) => {
-      console.error(error);
-      return [];
-    }),
-    runQuery(scoreHistorySql).catch((error) => {
-      console.error(error);
-      return [];
-    })
-  ]).then(([userStatsResults, scoreHistory]) => {
-    const userStats = userStatsResults?.[0] || {};
-
-    return {
-      quizzesPlayed: Number(userStats.quizzesPlayed) || 0,
-      totalPoints: Number(userStats.totalPoints) || 0,
-      bestScore: Number(userStats.bestScore) || 0,
-      averageScore: Math.round(Number(userStats.averageScore) || 0),
-      highestLeaderboardRank: calculateHighestLeaderboardRank(userId, scoreHistory)
-    };
-  });
-}
-
-async function getDashboardProfile(userId) {
-  const dashboardSql = 'SELECT id, username FROM users WHERE id = ? AND is_deleted = FALSE';
-  const results = await runQuery(dashboardSql, [userId]);
-
-  if (results.length === 0) {
-    return null;
-  }
-
-  const dashboardUser = results[0];
-  const storedProfile = getStoredProfile(userId) || {};
-  const stats = await getDashboardStats(userId);
-
-  return {
-    profile: {
-      userId: Number(dashboardUser.id),
-      username: dashboardUser.username,
-      bio: storedProfile.bio || '',
-      profileImageUrl: storedProfile.profileImageUrl || null
-    },
-    stats
-  };
-}
-
+// Render the main public pages and player-facing game screens
 router.get('/', async (req, res) => {
   try {
     return res.render('home', {
@@ -153,15 +34,13 @@ router.get('/signup', (req, res) => {
 });
 
 router.get('/login', (req, res) => {
-  res.render('login', {
-    errorMessage: null,
-    email: ''
-  });
+  res.render('login', buildLoginViewModel());
 });
 
-router.get('/dashboard', isAuthenticated, async (req, res) => {
+router.get('/dashboard', redirectToLogin, async (req, res) => {
   const isEditing = req.query.edit === '1';
   try {
+    // The dashboard page built from profile data, stats, optional UI messages
     const dashboardData = await getDashboardProfile(req.session.user.id);
 
     if (!dashboardData) {
@@ -225,6 +104,7 @@ router.get('/cities', async (req, res) => {
   const selectedSort = req.query.sort || 'alpha-asc';
 
   try {
+    // Load the visible city list, state filters, and random quiz shortcut together
     const [cities, randomCity, states] = await Promise.all([
       getCities({ state: selectedState, sort: selectedSort }),
       getRandomCity(),
@@ -246,6 +126,7 @@ router.get('/cities', async (req, res) => {
 
 router.get('/cities/:cityId/game', async (req, res) => {
   try {
+    // Pre-build the quiz on the server so only playable cities render a game page
     const quiz = await buildQuizForCity(req.params.cityId);
 
     if (!quiz) {
@@ -262,6 +143,7 @@ router.get('/cities/:cityId/game', async (req, res) => {
   }
 });
 
+// Quiz scoring stays server-side so the client cannot award itself points
 router.post('/cities/:cityId/game/submit', async (req, res) => {
   const responses = Array.isArray(req.body.responses) ? req.body.responses : [];
   let result;
@@ -285,26 +167,24 @@ router.post('/cities/:cityId/game/submit', async (req, res) => {
     });
   }
 
-  db.query(
-    'INSERT INTO scores (user_id, score) VALUES (?, ?)',
-    [req.session.user.id, result.totalPoints],
-    (saveErr) => {
-      if (saveErr) {
-        console.error(saveErr);
-        return res.json({
-          ...result,
-          saved: false,
-          savedMessage: 'Your score was calculated, but it could not be saved.'
-        });
-      }
-
-      return res.json({
-        ...result,
-        saved: true,
-        savedMessage: 'Your score has been saved.'
-      });
-    }
-  );
+  try {
+    await runQuery('INSERT INTO scores (user_id, score) VALUES (?, ?)', [
+      req.session.user.id,
+      result.totalPoints
+    ]);
+    return res.json({
+      ...result,
+      saved: true,
+      savedMessage: 'Your score has been saved.'
+    });
+  } catch (error) {
+    console.error(error);
+    return res.json({
+      ...result,
+      saved: false,
+      savedMessage: 'Your score was calculated, but it could not be saved.'
+    });
+  }
 });
 
 module.exports = router;
