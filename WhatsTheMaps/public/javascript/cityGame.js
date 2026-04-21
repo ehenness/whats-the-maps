@@ -1,3 +1,6 @@
+// handles running quizzes
+// timer, saving response answers, showing final score
+
 const quizDataElement = document.getElementById('quiz-data');
 const gameMetaElement = document.getElementById('game-meta');
 

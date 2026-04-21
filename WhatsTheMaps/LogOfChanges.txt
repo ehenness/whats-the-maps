@@ -34,6 +34,9 @@
 - fixed pop ups (I accidentally fucked them up during a merge, sorry JF)
 - made other users profiles viewable
 
+4/21 - Emma
+- if error logging in (eg incorrect email/password) shows error on same page; doesn't redirect
+
 4/10 - JoseFelix
 - made footer into a navigation bar
 
