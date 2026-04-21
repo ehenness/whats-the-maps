@@ -39,3 +39,4 @@
 
 4/20 - JoseFelix
 - deleted "city-popup.ejs" and "mapch-popup.ejs" and any references to them
+- changed "footer" to "bar"

@@ -12,7 +12,7 @@ as well as for expanding upon previous design choices */
   --color-danger: #b6463c;
   --color-danger-dark: #8c322a;
   --color-banner: #d87c71;
-  --color-footer: #c8b08c;
+  --color-bar: #c8b08c;
   --color-border: #7b6551;
   --color-text: #2f241b;
   --color-text-muted: #5d4c3d;
@@ -725,12 +725,12 @@ a {
   line-height: 1.45;
 }
 
-.site-footer {
+.site-bar {
   border-bottom: 2px solid var(--color-border);
-  background-color: var(--color-footer);
+  background-color: var(--color-bar);
 }
 
-.footer-row {
+.bar-row {
   display: flex;
   justify-content: center;
   gap: 48px;
@@ -739,12 +739,12 @@ a {
   padding: 10px;
 }
 
-.footer-column {
+.bar-column {
   flex: 1;
   text-align: center;
 }
 
-.footer-links {
+.bar-links {
   display: inline-flex;
   flex-direction: column;
   gap: 6px;
@@ -754,12 +754,12 @@ a {
   text-align: left;
 }
 
-.footer-link {
+.bar-link {
   color: var(--color-text);
   text-decoration: none;
 }
 
-.footer-link:hover {
+.bar-link:hover {
   text-decoration: underline;
 }
 
@@ -915,7 +915,7 @@ a {
   }
 
   .top-bar,
-  .footer-row,
+  .bar-row,
   .city-item,
   .form-inline,
   .dashboard-actions,
@@ -928,11 +928,11 @@ a {
   }
 
   .left-section,
-  .footer-column {
+  .bar-column {
     text-align: center;
   }
 
-  .footer-links {
+  .bar-links {
     text-align: center;
   }
 
