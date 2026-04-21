@@ -95,14 +95,19 @@ router.post('/signup', async (req, res) => {
 });
 
 router.post('/login', async (req, res) => {
-  const { email, password } = req.body;
+  const email = trimString(req.body.email);
+  const password = req.body.password;
   const sql = 'SELECT * FROM users WHERE email = ? AND is_deleted = FALSE';
+  const invalidCredentialsMessage = 'No user found with that email and password';
 
   try {
     const results = await runQuery(sql, [email]);
 
     if (results.length === 0) {
-      return res.status(400).send('User not found');
+      return res.status(401).render('login', {
+        errorMessage: invalidCredentialsMessage,
+        email
+      });
     }
 
     const user = results[0];
@@ -110,7 +115,10 @@ router.post('/login', async (req, res) => {
     const passwordMatches = await bcrypt.compare(password, user.password);
 
     if (!passwordMatches) {
-      return res.status(400).send('Incorrect password');
+      return res.status(401).render('login', {
+        errorMessage: invalidCredentialsMessage,
+        email
+      });
     }
 
     req.session.user = {

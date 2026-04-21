@@ -153,7 +153,10 @@ router.get('/signup', (req, res) => {
 });
 
 router.get('/login', (req, res) => {
-  res.render('login');
+  res.render('login', {
+    errorMessage: null,
+    email: ''
+  });
 });
 
 router.get('/dashboard', isAuthenticated, async (req, res) => {

@@ -19,10 +19,14 @@
       <div class="page-card page-card--compact auth-card">
         <h1 class="page-title">Log In</h1>
 
+        <% if (errorMessage) { %>
+          <p class="message message-error"><%= errorMessage %></p>
+        <% } %>
+
         <form class="stacked-form" action="/users/login" method="POST">
           <div class="form-group">
             <label class="form-label" for="login-email">Email</label>
-            <input class="form-input" id="login-email" type="email" name="email" placeholder="Email" required>
+            <input class="form-input" id="login-email" type="email" name="email" placeholder="Email" value="<%= email || '' %>" required>
           </div>
 
           <div class="form-group">
