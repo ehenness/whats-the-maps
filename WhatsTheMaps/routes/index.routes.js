@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../db');
+const db = require('../repositories/db');
 const { listPresetProfileImages } = require('../profileConfig');
 const { getStoredProfile } = require('../profileStore');
 const {

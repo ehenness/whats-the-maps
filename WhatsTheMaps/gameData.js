@@ -1,4 +1,4 @@
-const db = require('./db');
+const db = require('./repositories/db');
 
 const QUESTION_TIME_LIMIT_MS = 15_000;
 const MAX_BASE_SCORE = 1_000;
