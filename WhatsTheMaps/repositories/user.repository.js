@@ -1,16 +1,5 @@
 const db = require('./db');
-
-function runQuery(sql, params = []) {
-  return new Promise((resolve, reject) => {
-    db.query(sql, params, (error, results) => {
-      if (error) {
-        reject(error);
-        return;
-      }
-        resolve(results);
-    });
-  });
-}
+const runQuery = require('../lib/runQuery');
 
 function getUserByUsername(username) {
   const sql = 'SELECT * FROM users WHERE username = ? AND is_deleted = FALSE';

@@ -1,5 +1,6 @@
 const dashboardService = require('../services/dashboard.service');
-const { listPresetProfileImages } = require('../profileConfig');
+const { listPresetProfileImages } = require('../config/profileConfig');
+const { buildReadOnlyProfileViewModel } = require('../utils/profile.util');
 
 async function getDashboard(req, res) {
   const isEditing = req.query.edit === '1';
@@ -19,10 +20,7 @@ async function getDashboard(req, res) {
       presetAvatars: listPresetProfileImages(),
       stats: data.stats,
       successMessage: req.query.updated === '1' ? 'Profile updated.' : null,
-      errorMessage: {
-        image: 'That image could not be saved.',
-        update: 'We could not save your profile changes.'
-      }[req.query.error] || null
+      errorMessage: dashboardService.dashboardErrorMessages[req.query.error] || null
     });
 
   } catch (error) {
@@ -49,16 +47,7 @@ async function getPlayerProfile(req, res) {
       return res.status(404).send('Player not found.');
     }
 
-    return res.render('dashboard', {
-      isEditing: false,
-      isReadOnlyProfile: true,
-      isOwnProfile: false,
-      profile: data.profile,
-      presetAvatars: [],
-      stats: data.stats,
-      successMessage: null,
-      errorMessage: null
-    });
+    return buildReadOnlyProfileViewModel(data);
 
   } catch (error) {
     console.error(error);

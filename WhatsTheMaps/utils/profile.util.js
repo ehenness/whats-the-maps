@@ -1,21 +1,18 @@
-const {
-  listPresetProfileImages,
-  maxUploadedImageLength
-} = require('../profileConfig');
+const profleConfig = require('../config/profileConfig');
 
 function trimString(value) {
   return typeof value === 'string' ? value.trim() : '';
 }
 
 function getProfileImage({ selectedAvatar, uploadedImageData, currentImage }) {
-  const presetAvatars = listPresetProfileImages();
+  const presetAvatars = profileConfig.listPresetProfileImages();
 
   const cleanAvatar = trimString(selectedAvatar);
   const cleanUpload = trimString(uploadedImageData);
 
   if (cleanUpload) {
     const looksLikeImage = cleanUpload.startsWith('data:image/');
-    const fitsLimit = cleanUpload.length <= maxUploadedImageLength;
+    const fitsLimit = cleanUpload.length <= profileConfig.maxUploadedImageLength;
 
     if (!looksLikeImage || !fitsLimit) {
       return { error: 'image' };

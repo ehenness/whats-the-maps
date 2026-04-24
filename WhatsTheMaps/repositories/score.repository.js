@@ -1,25 +1,5 @@
-/*db.query(
-    'INSERT INTO scores (user_id, score) VALUES (?, ?)',
-    [req.session.user.id, result.totalPoints],
-    (saveErr) => {
-      if (saveErr) {
-        console.error(saveErr);
-        return res.json({
-          ...result,
-          saved: false,
-          savedMessage: 'Your score was calculated, but it could not be saved.'
-        });
-      }
-
-      return res.json({
-        ...result,
-        saved: true,
-        savedMessage: 'Your score has been saved.'
-      });
-    }
-  );
-*/
 const db = require('./db');
+const runQuery = require('../lib/runQuery');
 
 function getUserStats(userId) {
   const sql = `
@@ -63,6 +43,3 @@ function saveScore(userId, score) {
 }
 
 module.exports = { saveScore, getUserStats, getScoreHistory };
-
-  //create saveScore(userId, score)
-  // Then route → controller → service → repository
