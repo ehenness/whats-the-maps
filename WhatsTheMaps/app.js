@@ -4,10 +4,10 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const session = require('express-session');
-const db = require('./db');
+const db = require('./repositories/db');
 
-const indexRouter = require('./routes/index');
-const usersRouter = require('./routes/users');
+const indexRouter = require('./routes/index.routes');
+const usersRouter = require('./routes/user.routes');
 
 const app = express();
 const port = process.env.PORT || 3000;

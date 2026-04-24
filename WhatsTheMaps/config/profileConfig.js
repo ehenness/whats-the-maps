@@ -32,5 +32,5 @@ function listPresetProfileImages() {
 module.exports = {
   listPresetProfileImages,
   maxBioLength,
-  maxUploadedImageLength
+  maxUploadedImageLength,
 };

@@ -1,7 +1,20 @@
 const express = require('express');
 const router = express.Router();
-const bcrypt = require('bcrypt');
-const db = require('../repositories/db');
+
+const userController = require('../controllers/user.controller');
+const { isAuthenticated } = require('../middleware/auth.middleware');
+
+
+router.post('/signup', userController.getSignupPage);
+router.post('/login', userController.login);
+router.get('/logout', userController.logout);
+router.post('/update-profile', isAuthenticated, userController.updateProfile);
+router.post('/delete-account', isAuthenticated, userController.deleteAccount);
+
+module.exports = router;
+
+
+/*const db = require('../repositories/db');
 const {
   listPresetProfileImages,
   maxBioLength,
@@ -12,6 +25,7 @@ const {
   getStoredProfile,
   saveStoredProfile
 } = require('../profileStore');
+
 
 function runQuery(sql, params = []) {
   return new Promise((resolve, reject) => {
@@ -203,3 +217,4 @@ router.post('/delete-account', isAuthenticated, async (req, res) => {
 });
 
 module.exports = router;
+*/
