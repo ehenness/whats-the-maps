@@ -2,44 +2,13 @@
 
 const { getStoredProfile } = require('../profileStore');
 const runQuery = require('../lib/runQuery');
+const { calculateHighestLeaderboardRank } = require('./dashboardUtils');
 
 const dashboardErrorMessages = {
   image: 'That image could not be saved. Try a smaller file or image dimensions.',
   update: 'We could not save your profile changes.',
   user: 'We could not find that account.'
 };
-
-// Track the best rank a player has reached
-function calculateHighestLeaderboardRank(userId, scoreHistory = []) {
-  const bestScoreByUser = new Map();
-  let highestRank = null;
-
-  scoreHistory.forEach((entry) => {
-    const entryUserId = Number(entry.userId);
-    const score = Number(entry.score) || 0;
-    const previousBest = bestScoreByUser.get(entryUserId) || 0;
-
-    if (score <= previousBest) {
-      return;
-    }
-
-    bestScoreByUser.set(entryUserId, score);
-
-    if (entryUserId !== Number(userId)) {
-      return;
-    }
-
-    const rank =
-      1 +
-      [...bestScoreByUser.entries()].filter(
-        ([otherUserId, otherUserBest]) => otherUserId !== entryUserId && otherUserBest > score
-      ).length;
-
-    highestRank = highestRank === null ? rank : Math.min(highestRank, rank);
-  });
-
-  return highestRank;
-}
 
 // Dashboard stats combine aggregates from the user's games with leaderboard history
 async function getDashboardStats(userId) {

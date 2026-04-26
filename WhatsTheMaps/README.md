@@ -140,3 +140,20 @@ Then start the app with:
 ```bash
 npm start
 ```
+
+## Testing
+
+The project now uses Node's built-in test runner, so you do not need Jest or Vitest to run the current unit tests.
+
+From the `WhatsTheMaps` folder:
+
+```bash
+npm test
+```
+
+Useful variants:
+
+- `npm run test:watch` reruns tests as files change.
+- `npm run test:coverage` runs the same test suite with Node's built-in coverage report.
+
+The current tests cover pure quiz, dashboard, and view-model logic plus route behavior for login, profile updates, and quiz score saving. They run without Docker or a live MySQL connection because the route tests use injected dependencies and mocked request/response objects.
