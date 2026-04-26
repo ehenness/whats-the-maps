@@ -1,0 +1,47 @@
+# Runs the app and a MySQL database together for local development.
+services:
+  db:
+    image: mysql:8.0
+    container_name: whats-the-maps-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: trivia_app
+      MYSQL_USER: appuser
+      MYSQL_PASSWORD: apppassword
+    ports:
+      - "${DB_PUBLIC_PORT:-3307}:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./DB/trivia_app_users.sql:/docker-entrypoint-initdb.d/01-users.sql:ro
+      - ./DB/trivia_app_cities.sql:/docker-entrypoint-initdb.d/02-cities.sql:ro
+      - ./DB/trivia_app_fact_types.sql:/docker-entrypoint-initdb.d/03-fact-types.sql:ro
+      - ./DB/trivia_app_city_facts.sql:/docker-entrypoint-initdb.d/04-city-facts.sql:ro
+      - ./DB/trivia_app_scores.sql:/docker-entrypoint-initdb.d/05-scores.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p$$MYSQL_ROOT_PASSWORD --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 20s
+
+  app:
+    build:
+      context: .
+    container_name: whats-the-maps-app
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      PORT: 3000
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_USER: appuser
+      DB_PASSWORD: apppassword
+      DB_NAME: trivia_app
+    ports:
+      - "${APP_PORT:-3000}:3000"
+
+volumes:
+  mysql_data:
