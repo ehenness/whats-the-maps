@@ -22,22 +22,28 @@ async function signup(username, email, password) {
 }
 
 async function login(email, password) {
+  // 1. find user
   const user = await userRepository.getUserByEmail(email);
 
   if (!user) {
+    // check if email is actually a username
     user = await userRepository.getUserByUsername(email);
     if (!user) {
       throw new Error('User not found');
     }
   }
 
-  // if password doesn't match, throw error
-  if (!(await comparePassword(password, user.password))) {
-    throw new Error('Incorrect password.');
+  // 2. validate password 
+  const passwordMatches = await bcrypt.compare(password, user.password);
+
+  if (!passwordMatches) {
+    throw new Error('Incorrect password');
   }
 
+  // 3. load profile metadata (bio, profile image)
   const storedProfile = getStoredProfile(user.id) || {};
 
+  // 4. return structured data 
   return { user, storedProfile };
 }
 

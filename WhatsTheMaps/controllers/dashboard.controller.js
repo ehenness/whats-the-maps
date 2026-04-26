@@ -1,6 +1,6 @@
 const dashboardService = require('../services/dashboard.service');
 const { listPresetProfileImages } = require('../config/profileConfig');
-const { buildReadOnlyProfileViewModel } = require('../utils/profile.util');
+const { buildReadOnlyProfileViewModel } = require('../viewModels/dashboard.viewModel');
 
 async function getDashboard(req, res) {
   const isEditing = req.query.edit === '1';
@@ -47,7 +47,7 @@ async function getPlayerProfile(req, res) {
       return res.status(404).send('Player not found.');
     }
 
-    return buildReadOnlyProfileViewModel(data);
+    return res.render('dashboard', buildReadOnlyDashboardViewModel(data));
 
   } catch (error) {
     console.error(error);
