@@ -56,7 +56,12 @@ router.get('/dashboard', redirectToLogin, async (req, res) => {
       profile: dashboardData.profile,
       presetAvatars,
       stats: dashboardData.stats,
-      successMessage: req.query.updated === '1' ? 'Profile updated.' : null,
+      successMessage:
+        req.query.updated === '1'
+          ? 'Profile updated.'
+          : req.query.scoreSaved === '1'
+            ? 'Your guest quiz score has been saved to your profile.'
+            : null,
       errorMessage: dashboardErrorMessages[req.query.error] || null
     });
   } catch (error) {
@@ -160,10 +165,15 @@ router.post('/cities/:cityId/game/submit', async (req, res) => {
   }
 
   if (!req.session.user) {
+    // Keep the latest guest score in the session so it can be saved right after login.
+    req.session.pendingGuestScore = {
+      totalPoints: result.totalPoints
+    };
+
     return res.json({
       ...result,
       saved: false,
-      savedMessage: 'Log in to save your score to the dashboard.'
+      savedMessage: 'Log in to save this score to your dashboard and leaderboard.'
     });
   }
 

@@ -37,6 +37,23 @@ function trimString(value) {
   return typeof value === 'string' ? value.trim() : '';
 }
 
+// Save the last guest score after login so players can keep the run they just finished.
+async function savePendingGuestScore(req, userId) {
+  const pendingGuestScore = req.session.pendingGuestScore;
+
+  if (!pendingGuestScore || !Number.isFinite(Number(pendingGuestScore.totalPoints))) {
+    return false;
+  }
+
+  await runQuery('INSERT INTO scores (user_id, score) VALUES (?, ?)', [
+    userId,
+    Number(pendingGuestScore.totalPoints)
+  ]);
+  delete req.session.pendingGuestScore;
+
+  return true;
+}
+
 // Accept preset avatar path or an uploaded data URL
 function getProfileImageFromRequest(req) {
   const selectedAvatar = trimString(req.body.selectedAvatar);
@@ -117,8 +134,9 @@ router.post('/login', async (req, res) => {
 
     // Keep only the fields the app needs in the session object
     req.session.user = buildSessionUser(user, storedProfile);
+    const savedGuestScore = await savePendingGuestScore(req, user.id);
 
-    return res.redirect('/');
+    return res.redirect(savedGuestScore ? '/dashboard?scoreSaved=1' : '/');
   } catch (error) {
     console.error(error);
     return res.status(500).send('Server error');
