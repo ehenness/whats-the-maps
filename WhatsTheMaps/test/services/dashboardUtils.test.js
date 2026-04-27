@@ -1,3 +1,5 @@
+/** AI (Codex) was used to help write tests */
+
 const test = require('node:test');
 const assert = require('node:assert/strict');
 

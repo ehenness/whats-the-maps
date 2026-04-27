@@ -1,3 +1,4 @@
+/** Used generative AI (Codex) to help restructure old code */
 /** Pure quiz formatting and scoring helpers shared by game data and tests */
 const QUESTION_TIME_LIMIT_MS = 15_000;
 const MAX_BASE_SCORE = 1_000;

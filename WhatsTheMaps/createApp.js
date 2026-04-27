@@ -1,3 +1,5 @@
+/** AI (Codex) was used to help write this file */
+
 /** Builds the Express app with injectable dependencies for tests */
 const createError = require('http-errors');
 const express = require('express');

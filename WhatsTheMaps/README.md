@@ -1,6 +1,8 @@
 # What's The Maps?
 
-What's The Maps? is an Express + EJS trivia game backed by MySQL. The recommended local setup uses Docker Compose so the app and database start together with the seeded data in the `DB/` folder.
+Generative AI has been used to assist in developing this project (ChatGPT, Codex).
+
+Recommended local setup uses Docker Compose so the app and database start together with the seeded data in the `DB/` folder.
 
 ## Quick Start
 Project setup:

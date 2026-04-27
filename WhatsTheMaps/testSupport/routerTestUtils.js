@@ -1,3 +1,5 @@
+/** AI (Codex) was used to help write this file */
+
 function createMockResponse() {
   const response = {
     app: {

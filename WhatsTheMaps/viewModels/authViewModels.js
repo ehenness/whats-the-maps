@@ -1,4 +1,4 @@
-/** Creates view data objects for login page and related auth screens */
+/** Creates view data objects for login page, related auth screens */
 function buildLoginViewModel({ errorMessage = null, email = '' } = {}) {
   return {
     errorMessage,
