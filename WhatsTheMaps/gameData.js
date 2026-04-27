@@ -1,5 +1,14 @@
 const gameRepository = require('./repositories/game.repository');
 const gameUtils = require('./utils/game.util');
+const {
+  QUESTION_TIME_LIMIT_MS,
+  buildCityDescription,
+  buildCityInfo,
+  buildQuestionForFact,
+  calculateQuizResultFromQuiz,
+  normalizeFactRows,
+  toClientQuiz
+} = require('./lib/quizUtils');
 
 const QUESTION_TIME_LIMIT_MS = 15_000;
 const MAX_BASE_SCORE = 1_000;

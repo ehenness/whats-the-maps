@@ -1,7 +1,11 @@
+/** Used generative AI (ChatGPT) for help/ideas on how to take data and turn it into questions */
+/** Client-side quiz flow (timers, answer collection, results) */
+
 const quizDataElement = document.getElementById('quiz-data');
 const gameMetaElement = document.getElementById('game-meta');
 
 if (quizDataElement && gameMetaElement) {
+  // Read the quiz payload server rendered
   const quizData = JSON.parse(quizDataElement.textContent);
   const gameMeta = JSON.parse(gameMetaElement.textContent);
 
@@ -19,6 +23,7 @@ if (quizDataElement && gameMetaElement) {
   const responses = [];
   const replayUrl = gameMeta.submitUrl.replace('/submit', '');
 
+  // Stop interval and timeout both before moving on to next Q
   function stopTimers() {
     window.clearInterval(intervalId);
     window.clearTimeout(timeoutId);
@@ -38,6 +43,7 @@ if (quizDataElement && gameMetaElement) {
     timerFill.style.width = `${percentRemaining}%`;
   }
 
+  // Re-render the current question state when quiz advances
   function renderQuestion() {
     const currentQuestion = quizData.questions[currentQuestionIndex];
 
@@ -70,6 +76,7 @@ if (quizDataElement && gameMetaElement) {
     }, quizData.questionTimeLimitMs);
   }
 
+  // Save answer and response time before showing the next question
   function recordResponse(answerId) {
     const currentQuestion = quizData.questions[currentQuestionIndex];
 
@@ -112,6 +119,7 @@ if (quizDataElement && gameMetaElement) {
     `;
   }
 
+  // Swap quiz UI for score summary when server returns results
   function renderResults(result) {
     const saveMessage = result.saved
       ? 'Your score was saved and will appear on your dashboard and leaderboard.'
@@ -161,6 +169,7 @@ if (quizDataElement && gameMetaElement) {
     `;
   }
 
+  // Submit responses together so server can score and save the run
   async function finishQuiz() {
     stopTimers();
     progressLabel.textContent = 'Quiz Complete';

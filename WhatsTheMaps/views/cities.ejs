@@ -1,14 +1,14 @@
+<%# Renders the city browser with filters, city descriptions, and quiz launch links %>
 <!DOCTYPE html>
 <html>
 <head>
   <link rel="stylesheet" href="/stylesheets/style.css">
 </head>
 <body>
+  <%# Shared site chrome appears on every page %>
   <%- include('./partials/banner.ejs') %>
 
   <%- include('./partials/footer.ejs') %>
-
-  <div class="city-popup" id="city-info"><%- include('./partials/city-popup.ejs') %></div>
 
   <main class="page-shell page-shell--centered">
     <section class="page-stack page-stack--wide">
@@ -17,6 +17,7 @@
       <section class="page-card section-stack">
         <h2 class="page-title">Find a City Quiz</h2>
 
+        <%# City quiz filters and random quiz shortcut button %>
         <form class="cities-filter-form" action="/cities" method="GET">
           <div class="cities-controls">
             <div class="filter-control">
@@ -49,6 +50,7 @@
         </form>
       </section>
 
+      <%# Each city card includes a tooltip summary and a direct play action %>
       <section class="cities-list">
         <% if (cities.length === 0) { %>
           <section class="page-card section-stack">
@@ -87,6 +89,5 @@
       </section>
     </section>
   </main>
-
 </body>
 </html>

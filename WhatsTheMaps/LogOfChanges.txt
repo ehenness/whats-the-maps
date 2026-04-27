@@ -36,3 +36,18 @@
 
 4/10 - JoseFelix
 - made footer into a navigation bar
+
+4/20 - JoseFelix
+- deleted "city-popup.ejs" and "mapch-popup.ejs" and any references to them
+
+4/21 - Emma
+- if error logging in (eg incorrect email/password) shows error on same page; doesn't redirect
+- test@test.com acct deleted? (I didn't do it, but it is)
+- active test acct: test2@test.com; pass: tester
+- added all time points leaderboard
+- edited nav bar color
+- added comments/summaries to files
+
+4/27 - Emma
+- added tests and related files
+- imported DB files

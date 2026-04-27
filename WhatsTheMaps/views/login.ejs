@@ -1,3 +1,4 @@
+<%# Renders login page and shows inline feedback for invalid credentials %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -5,11 +6,13 @@
   <link rel="stylesheet" href="/stylesheets/style.css">
 </head>
 <body>
+  <%# Shared site chrome appears on every page %>
   <%- include('./partials/banner.ejs') %>
 
   <%- include('./partials/footer.ejs') %>
 
   <main class="page-shell">
+    <%# Top bar keeps a quick route back to the home page %>
     <div class="top-bar">
       <div></div>
       <a class="button-link" href="/">
@@ -21,10 +24,16 @@
       <div class="page-card page-card--compact auth-card">
         <h1 class="page-title">Log In</h1>
 
+        <%# Failed login attempts re-rendered here %>
+        <% if (errorMessage) { %>
+          <p class="message message-error"><%= errorMessage %></p>
+        <% } %>
+
+        <%# The login form preserves email field after failed attempt %>
         <form class="stacked-form" action="/users/login" method="POST">
           <div class="form-group">
             <label class="form-label" for="login-email">Email</label>
-            <input class="form-input" id="login-email" type="email" name="email" placeholder="Email" required>
+            <input class="form-input" id="login-email" type="email" name="email" placeholder="Email" value="<%= email || '' %>" required>
           </div>
 
           <div class="form-group">

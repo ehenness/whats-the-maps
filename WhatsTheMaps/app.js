@@ -1,5 +1,7 @@
+/** Configures Express app, shared middleware, top-level routes */
+const { createApp } = require('./createApp');
+
 const createError = require('http-errors');
-const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
@@ -9,8 +11,8 @@ const db = require('./repositories/db');
 const indexRouter = require('./routes/index.routes');
 const usersRouter = require('./routes/user.routes');
 
-const app = express();
-const port = process.env.PORT || 3001;
+const app = createApp();
+const port = process.env.PORT || 3000;
 const requestBodyLimit = '12mb';
 const sessionSecret = process.env.SESSION_SECRET || 'your-secret-key';
 const leaderboardSql = `
@@ -78,8 +80,12 @@ app.use((err, req, res, next) => {
   res.render('error');
 });
 
-app.listen(port, () => {
-  console.log(`Server running on http://localhost:${port}`);
-});
+// `npm start` boots through `bin/www`, keeps `node app.js` working
+if (require.main === module) {
+  app.listen(port, () => {
+    console.log(`Server running on http://localhost:${port}`);
+  });
+}
 
 module.exports = app;
+module.exports.createApp = createApp;

@@ -1,3 +1,4 @@
+/** Defines profile-related limits and discovers preset avatar images */
 const fs = require('fs');
 const path = require('path');
 
@@ -6,10 +7,12 @@ const maxUploadedImageLength = 12_000_000;
 const presetImagesDirectory = path.join(__dirname, 'public', 'images', 'avatars');
 const allowedPresetExtensions = new Set(['.jpg', '.jpeg', '.png', '.webp', '.gif']);
 
+// Only expose image formats the browser can render directly in the profile picker
 function isAllowedPresetImage(fileName) {
   return allowedPresetExtensions.has(path.extname(fileName).toLowerCase());
 }
 
+// Convert files on disk into public URLs
 function listPresetProfileImages() {
   try {
     if (!fs.existsSync(presetImagesDirectory)) {
