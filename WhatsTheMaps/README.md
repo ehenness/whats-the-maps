@@ -1,6 +1,8 @@
 # What's The Maps?
 
-What's The Maps? is an Express + EJS trivia game backed by MySQL. The recommended local setup uses Docker Compose so the app and database start together with the seeded data in the `DB/` folder.
+Generative AI has been used to assist in developing this project (ChatGPT, Codex).
+
+Recommended local setup uses Docker Compose so the app and database start together with the seeded data in the `DB/` folder.
 
 ## Quick Start
 Project setup:
@@ -140,3 +142,20 @@ Then start the app with:
 ```bash
 npm start
 ```
+
+## Testing
+
+The project now uses Node's built-in test runner, so you do not need Jest or Vitest to run the current unit tests.
+
+From the `WhatsTheMaps` folder:
+
+```bash
+npm test
+```
+
+Useful variants:
+
+- `npm run test:watch` reruns tests as files change.
+- `npm run test:coverage` runs the same test suite with Node's built-in coverage report.
+
+The current tests cover pure quiz, dashboard, and view-model logic plus route behavior for login, profile updates, and quiz score saving. They run without Docker or a live MySQL connection because the route tests use injected dependencies and mocked request/response objects.

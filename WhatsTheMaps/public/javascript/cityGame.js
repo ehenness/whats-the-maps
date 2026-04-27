@@ -1,3 +1,4 @@
+/** Used generative AI (ChatGPT) for help/ideas on how to take data and turn it into questions */
 /** Client-side quiz flow (timers, answer collection, results) */
 
 const quizDataElement = document.getElementById('quiz-data');

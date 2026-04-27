@@ -1,4 +1,4 @@
-/** Holds reusable middleware for routes that depend on a logged-in user. */
+/** Holds reusable middleware for routes that depend on a logged-in user */
 
 // Page routes redirect guests to the login page, while account actions return an error.
 function redirectToLogin(req, res, next) {

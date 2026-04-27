@@ -1,6 +1,4 @@
-/**
- * Summary: Creates the shared MySQL connection used by the server-side data layer.
- */
+/** Creates shared MySQL connection used by server-side data layer */
 const mysql = require('mysql2');
 
 const db = mysql.createConnection({
