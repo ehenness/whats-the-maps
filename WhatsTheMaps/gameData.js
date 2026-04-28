@@ -10,7 +10,6 @@ const {
   toClientQuiz
 } = require('./lib/quizUtils');
 
-const QUESTION_TIME_LIMIT_MS = 15_000;
 const MAX_BASE_SCORE = 1_000;
 const CORRECTNESS_SCORE_SHARE = 0.75;
 const MAX_STREAK = 5;

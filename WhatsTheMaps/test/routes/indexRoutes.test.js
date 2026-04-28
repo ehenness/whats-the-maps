@@ -5,7 +5,7 @@ const assert = require('node:assert/strict');
 
 const createIndexRouter = require('../../routes/index');
 const createUsersRouter = require('../../routes/users');
-const { redirectToLogin, requireSessionUser } = require('../../middleware/auth');
+const { redirectToLogin, requireSessionUser } = require('../../middleware/auth.middleware');
 const { invokeRoute } = require('../../testSupport/routerTestUtils');
 
 function createStubIndexRouter(overrides = {}) {

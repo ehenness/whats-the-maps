@@ -5,7 +5,7 @@ const pageController = require('../controllers/page.controller');
 const dashboardController = require('../controllers/dashboard.controller');
 const gameController = require('../controllers/game.controller');
 
-const { isAuthenticated } = require('../middlewear/auth.middlewear');
+const authMiddleware = require('../middleware/auth.middleware');
 
 
 // Public pages
@@ -14,7 +14,7 @@ router.get('/signup', pageController.getSignupPage);
 router.get('/login', pageController.getLoginPage);
 
 // Dashboard
-router.get('/dashboard', isAuthenticated, dashboardController.getDashboard);
+router.get('/dashboard', authMiddleware.redirectToLogin, dashboardController.getDashboard);
 router.get('/players/:userId', dashboardController.getPlayerProfile);
 
 // Cities / Game

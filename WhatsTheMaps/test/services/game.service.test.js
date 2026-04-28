@@ -67,5 +67,55 @@ describe('game.service', () => {
     });
 
   });
+  
+  describe('submitQuiz', () => {
+
+    afterEach(() => sinon.restore());
+
+    it('returns null if quiz does not exist', async () => {
+      sinon.stub(gameService, 'calculateQuizResult').resolves(null);
+
+      const result = await gameService.submitQuiz(1, [], null);
+
+      expect(result).to.equal(null);
+    });
+
+    it('returns unsaved result for guest user', async () => {
+      sinon.stub(gameService, 'calculateQuizResult').resolves({
+        totalPoints: 100
+      });
+
+      const result = await gameService.submitQuiz(1, [], null);
+
+      expect(result.saved).to.equal(false);
+      expect(result.savedMessage).to.exist;
+    });
+
+    it('saves score for logged-in user', async () => {
+      sinon.stub(gameService, 'calculateQuizResult').resolves({
+        totalPoints: 200
+      });
+
+      sinon.stub(scoreRepository, 'saveScore').resolves();
+
+      const result = await gameService.submitQuiz(1, [], { id: 5 });
+
+      expect(result.saved).to.equal(true);
+    });
+
+    it('handles DB failure gracefully', async () => {
+      sinon.stub(gameService, 'calculateQuizResult').resolves({
+        totalPoints: 300
+      });
+
+      sinon.stub(scoreRepository, 'saveScore').rejects(new Error('DB fail'));
+
+      const result = await gameService.submitQuiz(1, [], { id: 5 });
+
+      expect(result.saved).to.equal(false);
+      expect(result.savedMessage).to.include('could not be saved');
+    });
+
+  });
 
 });

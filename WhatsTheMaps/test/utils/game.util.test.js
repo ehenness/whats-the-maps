@@ -75,4 +75,50 @@ describe('game.util', () => {
     });
   });
 
+  it('clamps response time correctly', () => {
+    const result = clampResponseTime(-100);
+    expect(result).to.equal(0);
+
+    const result2 = clampResponseTime(999999);
+    expect(result2).to.be.at.most(15000);
+  });
+
+  it('handles unanswered question', () => {
+    const question = {
+      questionId: 1,
+      correctAnswerId: 10,
+      correctAnswerText: 'Correct',
+      possibleAnswers: []
+    };
+
+    const { result } = evaluateQuestion({
+      question,
+      response: null,
+      index: 0,
+      correctnessPoints: [100],
+      speedPoints: [50],
+      currentStreak: 0,
+      constants: {
+        MAX_STREAK: 5,
+        STREAK_BONUS_STEP: 5,
+        TIME_LIMIT: 15000
+      }
+    });
+
+    expect(result.isCorrect).to.equal(false);
+  });
+
+  it('groups facts by cityId', () => {
+    const facts = [
+      { cityId: 1 },
+      { cityId: 1 },
+      { cityId: 2 }
+    ];
+
+    const map = groupFactsByCityId(facts);
+
+    expect(map.get(1)).to.have.length(2);
+    expect(map.get(2)).to.have.length(1);
+  });
+
 });

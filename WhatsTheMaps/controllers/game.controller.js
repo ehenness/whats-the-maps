@@ -29,6 +29,34 @@ async function submitQuiz(req, res) {
   const responses = Array.isArray(req.body.responses) ? req.body.responses : [];
 
   try {
+    const result = await gameService.submitQuiz(
+      req.params.cityId,
+      responses,
+      req.session.user
+    );
+
+    if (!result) {
+      return res.status(404).json({ error: 'City quiz not found.' });
+    }
+
+    // 🔥 IMPORTANT: restore guest session behavior
+    if (!req.session.user) {
+      req.session.pendingGuestScore = {
+        totalPoints: result.totalPoints
+      };
+    }
+
+    return res.json(result);
+
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'We could not score that quiz right now.' });
+  }
+}
+async function submitQuiz(req, res) {
+  const responses = Array.isArray(req.body.responses) ? req.body.responses : [];
+
+  try {
     const result = await gameService.submitQuiz(req.params.cityId, responses, req.session.user);
 
     if (!result) {

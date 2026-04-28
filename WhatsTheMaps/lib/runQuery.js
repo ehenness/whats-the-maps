@@ -1,4 +1,4 @@
-const db = require('../db');
+const db = require('../repositories/db');
 
 // Wrap callback-based MySQL client app can use async/await.
 function runQuery(sql, params = []) {
