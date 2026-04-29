@@ -1,4 +1,4 @@
-const profleConfig = require('../config/profileConfig');
+const profileConfig = require('../config/profileConfig');
 
 function trimString(value) {
   return typeof value === 'string' ? value.trim() : '';

@@ -418,6 +418,102 @@ function normalizeFactRows(rows) {
     .filter(Boolean);
 }
 
+function buildQuizFromData(cities, facts, cityId) {
+  const city = getCityById(cities, cityId);
+  if (!city) return null;
+
+  const cityFacts = facts.filter((fact) => fact.cityId === Number(cityId));
+  const questions = getQuestionsForCity(cityFacts, facts);
+
+  if (questions.length === 0) return null;
+
+  return {
+    city,
+    questionTimeLimitMs: QUESTION_TIME_LIMIT_MS,
+    questions
+  };
+}
+
+function calculateQuizResultFromQuiz(quiz, responses = []) {
+  if (!quiz) return null;
+
+  const responseMap = new Map(
+    responses.map((r) => [Number(r.questionId), r])
+  );
+
+  const correctnessPoints = splitScorePool(
+    Math.round(MAX_BASE_SCORE * CORRECTNESS_SCORE_SHARE),
+    quiz.questions.length
+  );
+
+  const speedPoints = splitScorePool(
+    MAX_BASE_SCORE - Math.round(MAX_BASE_SCORE * CORRECTNESS_SCORE_SHARE),
+    quiz.questions.length
+  );
+
+  let currentStreak = 0;
+  let maxStreak = 0;
+
+  const evaluated = quiz.questions.map((question, index) => {
+    const { result, newStreak } = evaluateQuestion({
+      question,
+      response: responseMap.get(question.questionId),
+      index,
+      correctnessPoints,
+      speedPoints,
+      currentStreak,
+      constants: {
+        MAX_STREAK,
+        STREAK_BONUS_STEP,
+        TIME_LIMIT: QUESTION_TIME_LIMIT_MS
+      }
+    });
+
+    currentStreak = newStreak;
+    maxStreak = Math.max(maxStreak, currentStreak);
+
+    return result;
+  });
+
+  const totals = aggregateResults(evaluated);
+
+  return {
+    city: quiz.city,
+    questionTimeLimitMs: QUESTION_TIME_LIMIT_MS,
+    maxBaseScore: MAX_BASE_SCORE,
+    maxStreak,
+    totalQuestions: quiz.questions.length,
+    ...totals,
+    questionResults: evaluated
+  };
+}
+
+
+function processCities(cities, facts, {state, sort}){
+  const factsByCityId = groupFactsByCityId(facts);
+
+  // may be unnecessary to normalize state since DB should enforce consistent values, but just in case...
+  const normalizedState = state || 'all';
+  
+  const filteredCities =
+    normalizedState === 'all'
+      ? cities
+      : cities.filter((city) => city.state === normalizedState);
+
+  const citiesWithDescriptions = enrichCities(filteredCities, factsByCityId);
+
+  return sortCities(citiesWithDescriptions, sort);
+}
+function getCityById(cities, cityId) {
+  return cities.find(c => c.cityId === Number(cityId));
+}
+
+function getQuestionsForCity(cityFacts, allFacts) {
+  return cityFacts
+    .map(f => buildQuestionForFact(f, allFacts))
+    .filter(Boolean);
+}
+
 module.exports = { 
     shuffle,     
     splitScorePool, 
@@ -437,5 +533,10 @@ module.exports = {
     groupFactsByCityId,
     enrichCities,
     sortCities,
-    toClientQuiz
+    toClientQuiz, 
+    buildQuizFromData,
+    calculateQuizResultFromQuiz,
+    processCities,
+    getCityById,
+    getQuestionsForCity
 };

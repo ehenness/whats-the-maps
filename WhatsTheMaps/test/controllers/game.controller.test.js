@@ -1,54 +1,53 @@
-const { expect } = require('chai');
+const test = require('node:test');
+const { afterEach } = require('node:test');
+const assert = require('node:assert/strict');
 const sinon = require('sinon');
+
 const gameController = require('../../controllers/game.controller');
 const gameService = require('../../services/game.service');
 
-describe('game.controller submitQuiz', () => {
+afterEach(() => sinon.restore());
 
-  afterEach(() => sinon.restore());
+test('stores guest score in session', async () => {
+  const req = {
+    params: { cityId: 1 },
+    body: { responses: [] },
+    session: {}
+  };
 
-  it('stores guest score in session', async () => {
-    const req = {
-      params: { cityId: 1 },
-      body: { responses: [] },
-      session: {}
-    };
+  const res = {
+    json: sinon.spy(),
+    status: sinon.stub().returnsThis()
+  };
 
-    const res = {
-      json: sinon.spy(),
-      status: sinon.stub().returnsThis()
-    };
-
-    sinon.stub(gameService, 'submitQuiz').resolves({
-      totalPoints: 150,
-      saved: false
-    });
-
-    await gameController.submitQuiz(req, res);
-
-    expect(req.session.pendingGuestScore.totalPoints).to.equal(150);
+  sinon.stub(gameService, 'submitQuiz').resolves({
+    totalPoints: 150,
+    saved: false
   });
 
-  it('does NOT store session score for logged-in user', async () => {
-    const req = {
-      params: { cityId: 1 },
-      body: { responses: [] },
-      session: { user: { id: 10 } }
-    };
+  await gameController.submitQuiz(req, res);
 
-    const res = {
-      json: sinon.spy(),
-      status: sinon.stub().returnsThis()
-    };
+  assert.equal(req.session.pendingGuestScore.totalPoints, 150);
+});
 
-    sinon.stub(gameService, 'submitQuiz').resolves({
-      totalPoints: 150,
-      saved: true
-    });
+test('does not store session score for logged-in user', async () => {
+  const req = {
+    params: { cityId: 1 },
+    body: { responses: [] },
+    session: { user: { id: 10 } }
+  };
 
-    await gameController.submitQuiz(req, res);
+  const res = {
+    json: sinon.spy(),
+    status: sinon.stub().returnsThis()
+  };
 
-    expect(req.session.pendingGuestScore).to.be.undefined;
+  sinon.stub(gameService, 'submitQuiz').resolves({
+    totalPoints: 150,
+    saved: true
   });
 
+  await gameController.submitQuiz(req, res);
+
+  assert.equal(req.session.pendingGuestScore, undefined);
 });

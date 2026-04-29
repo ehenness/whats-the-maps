@@ -3,8 +3,8 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 
-const createIndexRouter = require('../../routes/index');
-const createUsersRouter = require('../../routes/users');
+const createIndexRouter = require('../../routes/index.routes');
+const createUsersRouter = require('../../routes/user.routes');
 const { redirectToLogin, requireSessionUser } = require('../../middleware/auth.middleware');
 const { invokeRoute } = require('../../testSupport/routerTestUtils');
 
