@@ -30,7 +30,7 @@ async function login(req, res) {
     return res.redirect('/');
   } catch (error) {
     console.error(error);
-    return res.status(400).send(error.message);
+    return res.status(401).send(error.message);
   }
 }
 
@@ -67,7 +67,7 @@ async function deleteAccount(req, res) {
   const { password } = req.body;
 
   if (!password) {
-    return res.status(400).send('Password is required.');
+    return res.status(401).send('Password is required.');
   }
 
   try {

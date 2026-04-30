@@ -10,13 +10,13 @@ const db = mysql.createConnection({
 });
 
 // Connect once during startup so database issues show up immediately in the logs.
-db.connect((err) => {
-  if (err) {
-    console.error('Database connection failed:', err);
-    return;
-  }
-
-  console.log('Connected to MySQL database!');
-});
-
+if (process.env.NODE_ENV !== 'test') {
+  db.connect((err) => {
+    if (err) {
+      console.error('Database connection failed:', err);
+      return;
+    }
+    console.log('Connected to MySQL database!');
+  });
+}
 module.exports = db;

@@ -33,7 +33,7 @@ test('getRandomCity returns a random city', async () => {
 
 
 test('submitQuiz returns null if quiz missing', async () => {
-  sinon.stub(gameService, 'buidlQuizForCity').resolves(null);
+  sinon.stub(gameService, 'buildQuizForCity').resolves(null);
 
   const result = await gameService.submitQuiz(1, [], null);
 
@@ -96,6 +96,19 @@ test('submitQuiz saves score for logged-in user', async () => {
   assert.equal(result.saved, true);
 });
 
+test('saves score for logged-in user', async () => {
+  const stub = sinon.stub(gameRepo, 'saveScore').resolves();
+
+  const result = await gameService.submitQuiz({
+    userId: 1,
+    quiz: mockQuiz
+  });
+
+  assert.ok(result);
+  assert.ok(stub.calledOnce);
+
+  stub.restore();
+});
 test('submitQuiz handles DB failure', async () => {
   sinon.stub(gameService, 'buildQuizForCity').resolves({
     city: { cityId: 1 },

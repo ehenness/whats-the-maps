@@ -1,10 +1,9 @@
 const bcrypt = require('bcrypt');
 const userRepository = require('../repositories/user.repository');
-const { saveStoredProfile } = require('../profileStore');
+const { saveStoredProfile, getStoredProfile } = require('../profileStore');
 const { listPresetProfileImages, maxBioLength, maxUploadedImageLength } = require('../config/profileConfig');
 const { getProfileImage, trimString } = require('../utils/profile.util');
 const { buildSessionUser } = require('../utils/session.util');
-const { getStoredProfile } = require('../profileStore');
 
 async function hashPassword(password) {
   const saltRounds = 10;
@@ -85,6 +84,8 @@ async function updateProfile(user, body) {
   if (!saved) {
     return { error: 'update' };
   }
+
+  const storedProfile = getStoredProfile(user.id) || {};
 
   return {
     updatedUser: buildSessionUser(user, storedProfile)
