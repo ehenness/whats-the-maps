@@ -1,65 +1,89 @@
 const express = require('express');
-const router = express.Router();
 
 const pageController = require('../controllers/page.controller');
 const dashboardController = require('../controllers/dashboard.controller');
 const gameController = require('../controllers/game.controller');
-
 const authMiddleware = require('../middleware/auth.middleware');
+const scoreRepository = require('../repositories/score.repository');
 
+function createInjectedSubmitQuizHandler({ calculateQuizResult, runQuery }) {
+  return async function submitQuiz(req, res) {
+    const responses = Array.isArray(req.body.responses) ? req.body.responses : [];
 
-// Public pages
-router.get('/', pageController.getHomePage);
-router.get('/signup', pageController.getSignupPage);
-router.get('/login', pageController.getLoginPage);
+    try {
+      const result = await calculateQuizResult(req.params.cityId, responses);
 
-// Dashboard
-router.get('/dashboard', authMiddleware.redirectToLogin, dashboardController.getDashboard);
-router.get('/players/:userId', dashboardController.getPlayerProfile);
+      if (!result) {
+        return res.status(404).json({ error: 'City quiz not found.' });
+      }
 
-// Cities / Game
-router.get('/cities', gameController.getCitiesPage);
-router.get('/cities/:cityId/game', gameController.getGamePage);
-router.post('/cities/:cityId/game/submit', gameController.submitQuiz);
+      if (!req.session.user) {
+        req.session.pendingGuestScore = result;
 
-module.exports = router;
+        return res.json({
+          ...result,
+          saved: false,
+          savedMessage: 'Log in to save this score to your dashboard and leaderboard.'
+        });
+      }
+
+      try {
+        if (typeof runQuery === 'function') {
+          await runQuery('INSERT INTO scores (user_id, score) VALUES (?, ?)', [
+            req.session.user.id,
+            result.totalPoints
+          ]);
+        } else {
+          await scoreRepository.saveScore(req.session.user.id, result.totalPoints);
+        }
+
+        return res.json({
+          ...result,
+          saved: true,
+          savedMessage: 'Your score has been saved.'
+        });
+      } catch (error) {
+        console.error(error);
+
+        return res.json({
+          ...result,
+          saved: false,
+          savedMessage: 'Your score was calculated, but it could not be saved.'
+        });
+      }
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ error: 'We could not score that quiz right now.' });
+    }
+  };
+}
 
 module.exports = function createIndexRouter(deps = {}) {
-  const express = require('express');
   const router = express.Router();
-
   const {
-    redirectToLogin,
+    redirectToLogin = authMiddleware.redirectToLogin,
     calculateQuizResult,
-    getCities,
-    getRandomCity,
-    getStates
+    runQuery
   } = deps;
 
-  // fallback to real implementations if not injected
-  const authMiddleware = require('../middleware/auth.middleware');
-  const gameController = require('../controllers/game.controller');
+  router.get('/', pageController.getHomePage);
+  router.get('/signup', pageController.getSignupPage);
+  router.get('/login', pageController.getLoginPage);
 
-  router.get(
-    '/dashboard',
-    redirectToLogin || authMiddleware.redirectToLogin,
-    require('../controllers/dashboard.controller').getDashboard
-  );
+  router.get('/dashboard', redirectToLogin, dashboardController.getDashboard);
+  router.get('/players/:userId', dashboardController.getPlayerProfile);
 
-  router.post('/cities/:cityId/game/submit', async (req, res) => {
-    // IMPORTANT: call injected function if provided
-    if (calculateQuizResult) {
-      const result = await calculateQuizResult();
-      return res.json({
-        ...result,
-        saved: false,
-        savedMessage:
-          'Log in to save this score to your dashboard and leaderboard.'
-      });
-    }
+  router.get('/cities', gameController.getCitiesPage);
+  router.get('/cities/:cityId/game', gameController.getGamePage);
 
-    return gameController.submitQuiz(req, res);
-  });
+  if (typeof calculateQuizResult === 'function') {
+    router.post(
+      '/cities/:cityId/game/submit',
+      createInjectedSubmitQuizHandler({ calculateQuizResult, runQuery })
+    );
+  } else {
+    router.post('/cities/:cityId/game/submit', gameController.submitQuiz);
+  }
 
   return router;
 };

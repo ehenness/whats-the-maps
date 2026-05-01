@@ -12,7 +12,7 @@ const createIndexRouter = require('./routes/index.routes');
 const createUsersRouter = require('./routes/user.routes');
 
 function loadLeaderboardService() {
-  return require('./services/leaderboardService');
+  return require('./services/leaderboard.service');
 }
 
 function createApp({

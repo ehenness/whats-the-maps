@@ -1,7 +1,7 @@
 const userRepository = require('../repositories/user.repository');
 const scoreRepository = require('../repositories/score.repository');
 const { getStoredProfile } = require('../profileStore');
-const { calculateHighestLeaderboardRank } = require("./leaderboard.service")
+const { calculateHighestLeaderboardRank } = require('../utils/dashboard.util');
 
 
 async function getDashboardStats(userId) {

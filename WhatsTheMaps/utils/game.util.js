@@ -45,7 +45,7 @@ function formatFactValue(fact) {
 // builds the question text for a given fact using predefined prompts or a generic fallback
 function buildQuestionText(fact) {
   const promptKey = `${fact.factTypeName}:${fact.dataType}`;
-  const promptBuilder = gameData.questionPrompts[promptKey];
+  const promptBuilder = questionPrompts[promptKey];
 
   if (promptBuilder) {
     return promptBuilder(fact);

@@ -22,7 +22,7 @@ async function signup(username, email, password) {
 
 async function login(email, password) {
   // 1. find user
-  const user = await userRepository.getUserByEmail(email);
+  let user = await userRepository.getUserByEmail(email);
 
   if (!user) {
     // check if email is actually a username
@@ -57,7 +57,7 @@ async function deleteAccount(userId, password) {
     throw new Error('Incorrect password.');
   }
 
-  await userRepository.softDeleteUser(userId);
+  await userRepository.deleteUser(userId);
   deleteStoredProfile(userId);
 }
 
