@@ -1,4 +1,5 @@
 const test = require('node:test');
+const { afterEach } = require('node:test');
 const assert = require('node:assert/strict');
 const sinon = require('sinon');
 
@@ -7,8 +8,77 @@ const gameRepository = require('../../repositories/game.repository');
 const scoreRepository = require('../../repositories/score.repository');
 const gameUtil = require('../../utils/game.util');
 
-const {afterEach} = require('node:test');
 afterEach(() => sinon.restore());
+
+function createCities() {
+  return [
+    { cityId: 1, cityName: 'Austin', state: 'Texas' },
+    { cityId: 2, cityName: 'Dallas', state: 'Texas' },
+    { cityId: 3, cityName: 'Houston', state: 'Texas' },
+    { cityId: 4, cityName: 'El Paso', state: 'Texas' }
+  ];
+}
+
+function createPopulationFacts() {
+  return [
+    {
+      factId: 11,
+      cityId: 1,
+      cityName: 'Austin',
+      state: 'Texas',
+      factTypeId: 1,
+      factTypeName: 'population',
+      dataType: 'number',
+      unit: 'people',
+      valueNumber: 974447,
+      valueText: null,
+      valueBoolean: null,
+      answerText: '974,447'
+    },
+    {
+      factId: 12,
+      cityId: 2,
+      cityName: 'Dallas',
+      state: 'Texas',
+      factTypeId: 1,
+      factTypeName: 'population',
+      dataType: 'number',
+      unit: 'people',
+      valueNumber: 1304379,
+      valueText: null,
+      valueBoolean: null,
+      answerText: '1,304,379'
+    },
+    {
+      factId: 13,
+      cityId: 3,
+      cityName: 'Houston',
+      state: 'Texas',
+      factTypeId: 1,
+      factTypeName: 'population',
+      dataType: 'number',
+      unit: 'people',
+      valueNumber: 2304580,
+      valueText: null,
+      valueBoolean: null,
+      answerText: '2,304,580'
+    },
+    {
+      factId: 14,
+      cityId: 4,
+      cityName: 'El Paso',
+      state: 'Texas',
+      factTypeId: 1,
+      factTypeName: 'population',
+      dataType: 'number',
+      unit: 'people',
+      valueNumber: 678815,
+      valueText: null,
+      valueBoolean: null,
+      answerText: '678,815'
+    }
+  ];
+}
 
 test('getRandomCity returns null if no cities exist', async () => {
   sinon.stub(gameRepository, 'getCityRows').resolves([]);
@@ -19,18 +89,13 @@ test('getRandomCity returns null if no cities exist', async () => {
 });
 
 test('getRandomCity returns a random city', async () => {
-  const mockCities = [
-    { cityId: 1, cityName: 'Austin' },
-    { cityId: 2, cityName: 'Dallas' }
-  ];
-
+  const mockCities = createCities();
   sinon.stub(gameRepository, 'getCityRows').resolves(mockCities);
 
   const result = await gameService.getHomeData();
 
   assert.ok(mockCities.includes(result.randomCity));
 });
-
 
 test('submitQuiz returns null if quiz missing', async () => {
   sinon.stub(gameService, 'buildQuizForCity').resolves(null);
@@ -42,84 +107,70 @@ test('submitQuiz returns null if quiz missing', async () => {
 
 test('submitQuiz handles guest user', async () => {
   sinon.stub(gameService, 'buildQuizForCity').resolves({
-    city: { cityId: 1 },
+    city: { cityId: 1, cityName: 'Austin', state: 'Texas' },
     questionTimeLimitMs: 15000,
     questions: []
   });
-
   sinon.stub(gameUtil, 'calculateQuizResultFromQuiz').returns({
-    totalPoints: 100
+    city: { cityId: 1, cityName: 'Austin', state: 'Texas' },
+    totalPoints: 100,
+    questionResults: []
   });
 
   const result = await gameService.submitQuiz(1, [], null);
 
-  assert.equal(result.saved, false);
-  assert.ok(result.savedMessage);
+  assert.deepEqual(result, {
+    city: { cityId: 1, cityName: 'Austin', state: 'Texas' },
+    totalPoints: 100,
+    questionResults: [],
+    saved: false,
+    savedMessage: 'Log in to save your score to the dashboard.'
+  });
 });
 
-test('buildQuizForCity works', async () => {
-  const mockCities = [
-    { cityId: 1, cityName: 'Austin', state: 'TX' }
-  ];
-
-  const mockFacts = [
-    { factId: 1, cityId: 1, factType: 'population', value: 1000000 },
-    { factId: 2, cityId: 2, factType: 'population', value: 500000 }
-  ];
-
-  sinon.stub(gameRepository, 'getCityRows').resolves(mockCities);
-  sinon.stub(gameRepository, 'getAllFacts').resolves(mockFacts);
+test('buildQuizForCity builds a quiz when enough distractors exist', async () => {
+  sinon.stub(gameRepository, 'getCityRows').resolves(createCities());
+  sinon.stub(gameRepository, 'getAllFacts').resolves(createPopulationFacts());
 
   const quiz = await gameService.buildQuizForCity(1);
 
   assert.ok(quiz);
-  assert.equal(quiz.city.cityId, 1);
-  assert.ok(Array.isArray(quiz.questions));
-  assert.ok(quiz.questions.length > 0);
+  assert.deepEqual(quiz.city, { cityId: 1, cityName: 'Austin', state: 'Texas' });
+  assert.equal(quiz.questions.length, 1);
+  assert.equal(quiz.questions[0].possibleAnswers.length, 4);
 });
 
 test('submitQuiz saves score for logged-in user', async () => {
   sinon.stub(gameService, 'buildQuizForCity').resolves({
-    city: { cityId: 1 },
+    city: { cityId: 1, cityName: 'Austin', state: 'Texas' },
     questionTimeLimitMs: 15000,
     questions: []
   });
-
   sinon.stub(gameUtil, 'calculateQuizResultFromQuiz').returns({
-    totalPoints: 200
+    city: { cityId: 1, cityName: 'Austin', state: 'Texas' },
+    totalPoints: 200,
+    questionResults: []
   });
-
   sinon.stub(scoreRepository, 'saveScore').resolves();
 
   const result = await gameService.submitQuiz(1, [], { id: 5 });
 
   assert.equal(result.saved, true);
+  assert.equal(result.savedMessage, 'Your score has been saved.');
+  assert.equal(scoreRepository.saveScore.calledOnceWithExactly(5, 200), true);
 });
 
-test('saves score for logged-in user', async () => {
-  const stub = sinon.stub(gameRepo, 'saveScore').resolves();
-
-  const result = await gameService.submitQuiz({
-    userId: 1,
-    quiz: mockQuiz
-  });
-
-  assert.ok(result);
-  assert.ok(stub.calledOnce);
-
-  stub.restore();
-});
 test('submitQuiz handles DB failure', async () => {
   sinon.stub(gameService, 'buildQuizForCity').resolves({
-    city: { cityId: 1 },
+    city: { cityId: 1, cityName: 'Austin', state: 'Texas' },
     questionTimeLimitMs: 15000,
     questions: []
   });
-
   sinon.stub(gameUtil, 'calculateQuizResultFromQuiz').returns({
-    totalPoints: 300
+    city: { cityId: 1, cityName: 'Austin', state: 'Texas' },
+    totalPoints: 300,
+    questionResults: []
   });
-
   sinon.stub(scoreRepository, 'saveScore').rejects(new Error('fail'));
 
   const result = await gameService.submitQuiz(1, [], { id: 5 });

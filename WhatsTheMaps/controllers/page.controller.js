@@ -1,4 +1,5 @@
 const gameService = require('../services/game.service');
+const { buildLoginViewModel } = require('../viewModels/authViewModels');
 
 async function getHomePage(req, res) {
   try {
@@ -15,7 +16,7 @@ function getSignupPage(req, res) {
 }
 
 function getLoginPage(req, res) {
-  return res.render('login');
+  return res.render('login', buildLoginViewModel());
 }
 
 module.exports = {

@@ -24,7 +24,7 @@ async function getCitiesData(query) {
 }
 
 async function getQuiz(cityId) {
-  const quiz = await buildQuizForCity(cityId);
+  const quiz = await module.exports.buildQuizForCity(cityId);
   if (!quiz) return null;
 
   return {
@@ -34,7 +34,7 @@ async function getQuiz(cityId) {
 }
 
 async function submitQuiz(cityId, responses, user) {
-  const quiz = await buildQuizForCity(cityId);
+  const quiz = await module.exports.buildQuizForCity(cityId);
   if (!quiz) return null;
 
   const result = gameUtil.calculateQuizResultFromQuiz(quiz, responses);
@@ -85,7 +85,7 @@ async function getCities({ state = 'all', sort = 'alpha-asc' } = {}) {
     gameRepository.getAllFacts()
   ]);
 
-  return processCities(cities, facts, {state, sort});
+  return gameUtil.processCities(cities, facts, { state, sort });
 }
 
 async function getRandomCity() {
@@ -118,7 +118,7 @@ function calculateScoreSplits(questionCount) {
 }
 
 async function calculateQuizResult(cityId, responses = []) {
-  const quiz = await buildQuizForCity(cityId);
+  const quiz = await module.exports.buildQuizForCity(cityId);
   if (!quiz) return null;
 
   return gameUtil.calculateQuizResultFromQuiz(quiz, responses);

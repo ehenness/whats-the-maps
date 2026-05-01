@@ -4,7 +4,7 @@ const path = require('path');
 
 const maxBioLength = 500;
 const maxUploadedImageLength = 12_000_000;
-const presetImagesDirectory = path.join(__dirname, 'public', 'images', 'avatars');
+const presetImagesDirectory = path.join(__dirname, '..', 'public', 'images', 'avatars');
 const allowedPresetExtensions = new Set(['.jpg', '.jpeg', '.png', '.webp', '.gif']);
 
 // Only expose image formats the browser can render directly in the profile picker
