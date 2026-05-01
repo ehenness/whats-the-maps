@@ -1,5 +1,6 @@
 const userService = require('../services/user.service');
 const { buildSessionUser } = require('../utils/session.util');
+const { buildLoginViewModel } = require('../viewModels/authViewModels');
 
 async function signup(req, res) {
   const { username, email, password } = req.body;
@@ -30,7 +31,13 @@ async function login(req, res) {
     return res.redirect('/');
   } catch (error) {
     console.error(error);
-    return res.status(401).send(error.message);
+    return res.status(401).render(
+      'login',
+      buildLoginViewModel({
+        errorMessage: 'No user found with that email and password',
+        email: typeof email === 'string' ? email.trim() : ''
+      })
+    );
   }
 }
 

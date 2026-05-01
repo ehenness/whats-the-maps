@@ -1,6 +1,6 @@
 const dashboardService = require('../services/dashboard.service');
 const { listPresetProfileImages } = require('../config/profileConfig');
-const { buildReadOnlyProfileViewModel } = require('../viewModels/dashboard.viewModel');
+const { buildReadOnlyDashboardViewModel } = require('../viewModels/dashboard.viewModel');
 
 async function getDashboard(req, res) {
   const isEditing = req.query.edit === '1';
