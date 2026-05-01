@@ -1,4 +1,5 @@
 const userService = require('../services/user.service');
+const scoreRepository = require('../repositories/score.repository');
 const { buildSessionUser } = require('../utils/session.util');
 const { buildLoginViewModel } = require('../viewModels/authViewModels');
 
@@ -27,6 +28,12 @@ async function login(req, res) {
     const { user, storedProfile } = await userService.login(email, password);
 
     req.session.user = buildSessionUser(user, storedProfile);
+
+    if (req.session.pendingGuestScore) {
+      await scoreRepository.saveScore(user.id, req.session.pendingGuestScore.totalPoints);
+      delete req.session.pendingGuestScore;
+      return res.redirect('/dashboard?scoreSaved=1');
+    }
 
     return res.redirect('/');
   } catch (error) {

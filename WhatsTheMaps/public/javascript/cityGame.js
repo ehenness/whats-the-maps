@@ -62,7 +62,7 @@ if (quizDataElement && gameMetaElement) {
       button.className = 'answer-option';
       button.textContent = answer.answerText;
       button.addEventListener('click', () => {
-        recordResponse(answer.answerId);
+        recordResponse(currentQuestion.questionId, answer.answerId);
       });
       answerGrid.appendChild(button);
     });
@@ -72,15 +72,29 @@ if (quizDataElement && gameMetaElement) {
 
     intervalId = window.setInterval(updateTimer, 100);
     timeoutId = window.setTimeout(() => {
-      recordResponse(null);
+      recordResponse(currentQuestion.questionId, null);
     }, quizData.questionTimeLimitMs);
   }
 
   // Save answer and response time before showing the next question
-  function recordResponse(answerId) {
+  function recordResponse(expectedQuestionId, answerId) {
     const currentQuestion = quizData.questions[currentQuestionIndex];
 
-    if (!currentQuestion) {
+    if (!currentQuestion || currentQuestion.questionId !== expectedQuestionId) {
+      const existingResponse = responses.find(
+        (response) => response.questionId === expectedQuestionId
+      );
+
+      // If timeout and click race on the same question, keep the real click
+      // instead of the earlier null placeholder recorded by the timeout.
+      if (
+        existingResponse &&
+        existingResponse.answerId == null &&
+        answerId != null
+      ) {
+        existingResponse.answerId = answerId;
+      }
+
       return;
     }
 

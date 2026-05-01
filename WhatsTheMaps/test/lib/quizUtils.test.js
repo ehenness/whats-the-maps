@@ -111,9 +111,9 @@ test('calculateQuizResultFromQuiz scores correctness, speed, streaks, and unansw
     { questionId: 102, answerId: 2, responseTimeMs: QUESTION_TIME_LIMIT_MS + 500 }
   ]);
 
-  assert.equal(result.baseScore, 584);
-  assert.equal(result.streakBonusTotal, 5);
-  assert.equal(result.totalPoints, 589);
+  assert.equal(result.baseScore, 225);
+  assert.equal(result.streakBonusTotal, 15);
+  assert.equal(result.totalPoints, 240);
   assert.equal(result.correctAnswers, 2);
   assert.equal(result.maxStreak, 2);
   assert.equal(result.totalQuestions, 3);
@@ -125,10 +125,10 @@ test('calculateQuizResultFromQuiz scores correctness, speed, streaks, and unansw
       correctAnswerText: 'A',
       isCorrect: true,
       responseTimeMs: 0,
-      basePoints: 250,
-      speedBonus: 84,
-      streakBonus: 0,
-      totalPoints: 334
+      basePoints: 100,
+      speedBonus: 25,
+      streakBonus: 5,
+      totalPoints: 130
     },
     {
       questionId: 102,
@@ -137,10 +137,10 @@ test('calculateQuizResultFromQuiz scores correctness, speed, streaks, and unansw
       correctAnswerText: 'B',
       isCorrect: true,
       responseTimeMs: QUESTION_TIME_LIMIT_MS,
-      basePoints: 250,
+      basePoints: 100,
       speedBonus: 0,
-      streakBonus: 5,
-      totalPoints: 255
+      streakBonus: 10,
+      totalPoints: 110
     },
     {
       questionId: 103,

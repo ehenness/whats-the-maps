@@ -7,8 +7,8 @@
 const {
     QUESTION_TIME_LIMIT_MS,
     questionPrompts, 
-    MAX_BASE_SCORE,
-    CORRECTNESS_SCORE_SHARE,
+    POINTS_PER_CORRECT_ANSWER,
+    MAX_SPEED_BONUS,
     MAX_STREAK,
     STREAK_BONUS_STEP,
     ANSWERS_PER_QUESTION
@@ -241,7 +241,7 @@ function calculateQuestionScore({
   );
 
   const streakBonus =
-    newStreak > 1 ? (newStreak - 1) * constants.STREAK_BONUS_STEP : 0;
+    newStreak * constants.STREAK_BONUS_STEP;
 
   return {
     basePoints,
@@ -441,15 +441,8 @@ function calculateQuizResultFromQuiz(quiz, responses = []) {
     responses.map((r) => [Number(r.questionId), r])
   );
 
-  const correctnessPoints = splitScorePool(
-    Math.round(MAX_BASE_SCORE * CORRECTNESS_SCORE_SHARE),
-    quiz.questions.length
-  );
-
-  const speedPoints = splitScorePool(
-    MAX_BASE_SCORE - Math.round(MAX_BASE_SCORE * CORRECTNESS_SCORE_SHARE),
-    quiz.questions.length
-  );
+  const correctnessPoints = Array(quiz.questions.length).fill(POINTS_PER_CORRECT_ANSWER);
+  const speedPoints = Array(quiz.questions.length).fill(MAX_SPEED_BONUS);
 
   let currentStreak = 0;
   let maxStreak = 0;
@@ -480,7 +473,7 @@ function calculateQuizResultFromQuiz(quiz, responses = []) {
   return {
     city: quiz.city,
     questionTimeLimitMs: QUESTION_TIME_LIMIT_MS,
-    maxBaseScore: MAX_BASE_SCORE,
+    maxBaseScore: quiz.questions.length * POINTS_PER_CORRECT_ANSWER,
     maxStreak,
     totalQuestions: quiz.questions.length,
     ...totals,

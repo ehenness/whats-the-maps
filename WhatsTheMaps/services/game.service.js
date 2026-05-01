@@ -2,11 +2,8 @@ const gameRepository = require('../repositories/game.repository');
 const scoreRepository = require('../repositories/score.repository');
 const gameUtil = require('../utils/game.util');
 const {
-  QUESTION_TIME_LIMIT_MS,
-  MAX_BASE_SCORE,
-  CORRECTNESS_SCORE_SHARE,
-  MAX_STREAK,
-  STREAK_BONUS_STEP
+  POINTS_PER_CORRECT_ANSWER,
+  MAX_SPEED_BONUS
 } = require('../gameData');
 
 
@@ -33,8 +30,7 @@ async function getQuiz(cityId) {
   };
 }
 
-async function submitQuiz(cityId, responses, user) {
-  const quiz = await module.exports.buildQuizForCity(cityId);
+async function submitQuizFromQuiz(quiz, responses, user) {
   if (!quiz) return null;
 
   const result = gameUtil.calculateQuizResultFromQuiz(quiz, responses);
@@ -64,6 +60,11 @@ async function submitQuiz(cityId, responses, user) {
       savedMessage: 'Your score was calculated, but it could not be saved.'
     };
   }
+}
+
+async function submitQuiz(cityId, responses, user) {
+  const quiz = await module.exports.buildQuizForCity(cityId);
+  return submitQuizFromQuiz(quiz, responses, user);
 }
 
 async function getHomeData() {
@@ -108,12 +109,9 @@ async function buildQuizForCity(cityId) {
 }
 
 function calculateScoreSplits(questionCount) {
-  const correctnessPoints = Math.round(MAX_BASE_SCORE * CORRECTNESS_SCORE_SHARE);
-  const speedPoints = MAX_BASE_SCORE - correctnessPoints;
-
   return {
-    correctnessSplit: gameUtil.splitScorePool(correctnessPoints, questionCount),
-    speedSplit: gameUtil.splitScorePool(speedPoints, questionCount)
+    correctnessSplit: Array(questionCount).fill(POINTS_PER_CORRECT_ANSWER),
+    speedSplit: Array(questionCount).fill(MAX_SPEED_BONUS)
   };
 }
 
@@ -127,6 +125,7 @@ async function calculateQuizResult(cityId, responses = []) {
 module.exports = {
   getCitiesData,
   getQuiz,
+  submitQuizFromQuiz,
   submitQuiz,
   getHomeData,
   getStates,

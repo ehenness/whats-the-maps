@@ -1,12 +1,10 @@
 # What's The Maps?
-
 Generative AI has been used to assist in developing this project (ChatGPT, Codex).
+Looking for information about project layout? Check out whats-the-maps/GUIDE.md
 
-Recommended local setup uses Docker Compose so the app and database start together with the seeded data in the `DB/` folder.
 
 ## Quick Start
 Project setup:
-
 1. Open the WhatsTheMaps folder
 2. Run: npm install
 3. Run: npm run docker:up
@@ -16,8 +14,22 @@ If you need to fully rebuild the DB from the SQL dump files:
 npm run docker:reset
 
 
-## Project Structure
+## Testing
+The project uses Node's built-in test runner.
 
+From the `WhatsTheMaps` folder:
+```bash
+npm test
+```
+
+Useful variants:
+- `npm run test:watch` reruns tests as files change.
+- `npm run test:coverage` runs the same test suite with Node's built-in coverage report.
+
+The current tests cover pure quiz, dashboard, and view-model logic plus route behavior for login, profile updates, and quiz score saving. They run without Docker or a live MySQL connection because the route tests use injected dependencies and mocked request/response objects.
+
+
+## Project Structure
 - `app.js` configures the Express app and top-level middleware.
 - `bin/www` is the main Node entry point used by `npm start`.
 - `routes/` contains the page and account routes.
@@ -26,42 +38,33 @@ npm run docker:reset
 - `DB/` contains the SQL dump files Docker imports into MySQL.
 - `data/userProfiles.json` stores local profile bio and avatar data.
 
+
 ## Docker Setup
-
 From the `WhatsTheMaps` folder, run:
-
 ```bash
 npm install
 npm run docker:up
 ```
 
-That command:
-
-- builds the Node app image
-- starts the app container
-- starts a MySQL 8 container
-- imports the SQL dump files from `DB/` on first startup
-
 To stop the stack:
-
 ```bash
 npm run docker:down
 ```
 
 To stream logs:
-
 ```bash
 npm run docker:logs
 ```
 
 To fully rebuild the database from the SQL dump files:
-
 ```bash
 npm run docker:reset
 ```
 
-## Fresh Clone Handoff
+Reset also clears saved profile bios and avatars because it removes Docker volumes. Avoid using if possible.
 
+
+## Fresh Clone Handoff
 For a new developer starting from a fresh git clone:
 
 ```bash
@@ -70,19 +73,18 @@ cd whats-the-maps/WhatsTheMaps
 npm install
 npm run docker:up
 ```
-
 Once the containers are up, open [http://localhost:3000](http://localhost:3000).
 
-## App And Database Ports
 
+## App And Database Ports
 - App: [http://localhost:3000](http://localhost:3000)
 - MySQL: `localhost:3307`
 
-The database is published on `3307` so it does not conflict with another local MySQL server that may already be using `3306`.
+The database is published on `3307` so it doesn't conflict with another local MySQL server that may already be using `3306`.
+
 
 ## Database Connection Details
-
-The app container connects to MySQL with these defaults:
+App container connects to MySQL with these defaults:
 
 ```env
 DB_HOST=db
@@ -102,8 +104,8 @@ PASSWORD=apppassword
 DATABASE=trivia_app
 ```
 
-## Seed Data
 
+## Seed Data
 On first startup, Docker imports these SQL files in order:
 
 1. `DB/trivia_app_users.sql`
@@ -114,8 +116,8 @@ On first startup, Docker imports these SQL files in order:
 
 These files are only applied when MySQL initializes a fresh data volume.
 
-## Re-Import Database Data
 
+## Re-Import Database Data
 If you change the SQL dump files and want Docker to rebuild the database from scratch, run:
 
 ```bash
@@ -123,14 +125,13 @@ docker compose down -v
 docker compose up --build
 ```
 
-The `-v` is important because it removes the existing MySQL volume. Without that, Docker keeps the current database contents and skips the seed SQL files.
+`-v` removes the existing MySQL volume and the app profile-data volume, otherwise, Docker keeps current database contents and saved profile data.
+
 
 ## Environment Variables
-
 A sample env file is included as `.env.example`. You can copy it to `.env` if you want to override defaults later.
 
 ## Non-Docker Run
-
 If you want to run the Node app outside Docker, make sure you have:
 
 - Node dependencies installed in `WhatsTheMaps/node_modules`
@@ -138,24 +139,6 @@ If you want to run the Node app outside Docker, make sure you have:
 - matching `DB_*` environment variables set for `db.js`
 
 Then start the app with:
-
 ```bash
 npm start
 ```
-
-## Testing
-
-The project now uses Node's built-in test runner, so you do not need Jest or Vitest to run the current unit tests.
-
-From the `WhatsTheMaps` folder:
-
-```bash
-npm test
-```
-
-Useful variants:
-
-- `npm run test:watch` reruns tests as files change.
-- `npm run test:coverage` runs the same test suite with Node's built-in coverage report.
-
-The current tests cover pure quiz, dashboard, and view-model logic plus route behavior for login, profile updates, and quiz score saving. They run without Docker or a live MySQL connection because the route tests use injected dependencies and mocked request/response objects.
