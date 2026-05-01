@@ -1,4 +1,8 @@
 <%# Renders login page and shows inline feedback for invalid credentials %>
+<%
+  const loginErrorMessage = typeof errorMessage === 'string' ? errorMessage : '';
+  const loginEmail = typeof email === 'string' ? email : '';
+%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -25,15 +29,15 @@
         <h1 class="page-title">Log In</h1>
 
         <%# Failed login attempts re-rendered here %>
-        <% if (errorMessage) { %>
-          <p class="message message-error"><%= errorMessage %></p>
+        <% if (loginErrorMessage) { %>
+          <p class="message message-error"><%= loginErrorMessage %></p>
         <% } %>
 
         <%# The login form preserves email field after failed attempt %>
         <form class="stacked-form" action="/users/login" method="POST">
           <div class="form-group">
             <label class="form-label" for="login-email">Email</label>
-            <input class="form-input" id="login-email" type="email" name="email" placeholder="Email" value="<%= email || '' %>" required>
+            <input class="form-input" id="login-email" type="email" name="email" placeholder="Email" value="<%= loginEmail %>" required>
           </div>
 
           <div class="form-group">

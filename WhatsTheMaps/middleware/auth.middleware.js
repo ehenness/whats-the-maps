@@ -13,11 +13,10 @@ function requireSessionUser(req, res, next) {
   if (req.session.user) {
     return next();
   }
-
-  return res.status(401).send('You must be logged in to manage your account.');
+  return res.status(401).send('You must be logged in.');
 }
 
 module.exports = {
-  redirectToLogin,
-  requireSessionUser
+  requireSessionUser,
+  redirectToLogin
 };

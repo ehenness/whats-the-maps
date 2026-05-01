@@ -1,4 +1,3 @@
-/** Shapes the small user object stored in the session after login. */
 // Keep session payload in one place
 function buildSessionUser(user, storedProfile = {}) {
   return {
@@ -10,6 +9,4 @@ function buildSessionUser(user, storedProfile = {}) {
   };
 }
 
-module.exports = {
-  buildSessionUser
-};
+module.exports = { buildSessionUser };

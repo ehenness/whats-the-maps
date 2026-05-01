@@ -3,7 +3,7 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 
-const { calculateHighestLeaderboardRank } = require('../../services/dashboardUtils');
+const { calculateHighestLeaderboardRank } = require('../../utils/dashboard.util');
 
 test('calculateHighestLeaderboardRank returns the best rank a player ever reached', () => {
   const highestRank = calculateHighestLeaderboardRank(2, [

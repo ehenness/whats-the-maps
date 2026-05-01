@@ -4,7 +4,7 @@ const path = require('path');
 
 const maxBioLength = 500;
 const maxUploadedImageLength = 12_000_000;
-const presetImagesDirectory = path.join(__dirname, 'public', 'images', 'avatars');
+const presetImagesDirectory = path.join(__dirname, '..', 'public', 'images', 'avatars');
 const allowedPresetExtensions = new Set(['.jpg', '.jpeg', '.png', '.webp', '.gif']);
 
 // Only expose image formats the browser can render directly in the profile picker
@@ -32,8 +32,15 @@ function listPresetProfileImages() {
   }
 }
 
+const dashboardErrorMessages = {
+  image: 'That image could not be saved. Try a smaller file or image dimensions.',
+  update: 'We could not save your profile changes.',
+  user: 'We could not find that account.'
+};
+
 module.exports = {
   listPresetProfileImages,
   maxBioLength,
-  maxUploadedImageLength
+  maxUploadedImageLength,
+  dashboardErrorMessages
 };

@@ -2,5 +2,13 @@
   "3": {
     "bio": "Second testing account",
     "profileImageUrl": "/images/avatars/Dr_Horn1.jpeg"
+  },
+  "15": {
+    "bio": "Updated bio",
+    "profileImageUrl": "data:image/png;base64,this-image-is-too-large"
+  },
+  "18": {
+    "bio": "New profile bio",
+    "profileImageUrl": null
   }
 }

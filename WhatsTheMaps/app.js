@@ -1,7 +1,8 @@
 /** Configures Express app, shared middleware, top-level routes */
 const { createApp } = require('./createApp');
-const port = process.env.PORT || 3000;
+
 const app = createApp();
+const port = process.env.PORT || 3000;
 
 // `npm start` boots through `bin/www`, keeps `node app.js` working
 if (require.main === module) {
