@@ -15,3 +15,7 @@ cd WhatsTheMaps
 npm install
 npm run docker:up
 ```
+
+Check ./WhatsTheMaps/README.md for more information about setup, testing, etc.
+
+See ./GUIDE.md for more in depth layout/explainations.
