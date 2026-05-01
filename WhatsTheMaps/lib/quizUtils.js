@@ -1,8 +1,8 @@
 /** Used generative AI (Codex) to help restructure old code */
 /** Pure quiz formatting and scoring helpers shared by game data and tests */
 const QUESTION_TIME_LIMIT_MS = 15_000;
-const MAX_BASE_SCORE = 1_000;
-const CORRECTNESS_SCORE_SHARE = 0.75;
+const POINTS_PER_CORRECT_ANSWER = 100;
+const MAX_SPEED_BONUS = 25;
 const MAX_STREAK = 5;
 const STREAK_BONUS_STEP = 5;
 const ANSWERS_PER_QUESTION = 4;
@@ -261,10 +261,8 @@ function calculateQuizResultFromQuiz(quiz, responses = []) {
   }
 
   const responseMap = new Map(responses.map((response) => [Number(response.questionId), response]));
-  const totalCorrectnessPoints = Math.round(MAX_BASE_SCORE * CORRECTNESS_SCORE_SHARE);
-  const totalSpeedPoints = MAX_BASE_SCORE - totalCorrectnessPoints;
-  const correctnessPointsByQuestion = splitScorePool(totalCorrectnessPoints, quiz.questions.length);
-  const speedPointsByQuestion = splitScorePool(totalSpeedPoints, quiz.questions.length);
+  const correctnessPointsByQuestion = Array(quiz.questions.length).fill(POINTS_PER_CORRECT_ANSWER);
+  const speedPointsByQuestion = Array(quiz.questions.length).fill(MAX_SPEED_BONUS);
 
   let currentStreak = 0;
   let maxStreak = 0;
@@ -298,7 +296,7 @@ function calculateQuizResultFromQuiz(quiz, responses = []) {
             (speedPointsByQuestion[index] || 0)
         )
       );
-      streakBonus = currentStreak > 1 ? (currentStreak - 1) * STREAK_BONUS_STEP : 0;
+      streakBonus = currentStreak * STREAK_BONUS_STEP;
     } else {
       currentStreak = 0;
     }
@@ -325,7 +323,7 @@ function calculateQuizResultFromQuiz(quiz, responses = []) {
   return {
     city: quiz.city,
     questionTimeLimitMs: QUESTION_TIME_LIMIT_MS,
-    maxBaseScore: MAX_BASE_SCORE,
+    maxBaseScore: quiz.questions.length * POINTS_PER_CORRECT_ANSWER,
     baseScore,
     streakBonusTotal,
     totalPoints,
@@ -338,7 +336,8 @@ function calculateQuizResultFromQuiz(quiz, responses = []) {
 
 module.exports = {
   ANSWERS_PER_QUESTION,
-  MAX_BASE_SCORE,
+  POINTS_PER_CORRECT_ANSWER,
+  MAX_SPEED_BONUS,
   QUESTION_TIME_LIMIT_MS,
   buildCityDescription,
   buildCityInfo,

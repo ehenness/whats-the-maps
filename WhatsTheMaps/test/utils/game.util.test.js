@@ -9,6 +9,8 @@ const {
   clampResponseTime,
   evaluateQuestion,
   groupFactsByCityId,
+  normalizeFactRows,
+  processCities,
   splitScorePool
 } = require('../../utils/game.util');
 
@@ -116,7 +118,9 @@ test('calculateQuizResult works for correct answer', () => {
 
   assert.equal(result.totalQuestions, 1);
   assert.equal(result.correctAnswers, 1);
-  assert.ok(result.totalPoints > 0);
+  assert.equal(result.baseScore, 120);
+  assert.equal(result.streakBonusTotal, 5);
+  assert.equal(result.totalPoints, 125);
 });
 
 test('buildQuizFromData builds quiz correctly', () => {
@@ -126,6 +130,22 @@ test('buildQuizFromData builds quiz correctly', () => {
   assert.deepEqual(quiz.city, { cityId: 1, cityName: 'Austin', state: 'Texas' });
   assert.equal(quiz.questions.length, 1);
   assert.equal(quiz.questions[0].possibleAnswers.length, 4);
+});
+
+test('buildQuizFromData returns null when the city is missing', () => {
+  const quiz = buildQuizFromData(createCities(), createPopulationFacts(), 99);
+
+  assert.equal(quiz, null);
+});
+
+test('buildQuizFromData returns null when a city lacks enough distractors', () => {
+  const quiz = buildQuizFromData(
+    [{ cityId: 1, cityName: 'Austin', state: 'Texas' }],
+    [createPopulationFacts()[0]],
+    1
+  );
+
+  assert.equal(quiz, null);
 });
 
 test('returns zero values for incorrect answer', () => {
@@ -156,6 +176,7 @@ test('calculates correct scoring for correct answer', () => {
 
   assert.equal(result.basePoints, 100);
   assert.ok(result.speedBonus >= 0);
+  assert.equal(result.streakBonus, 10);
   assert.equal(result.newStreak, 2);
 });
 
@@ -205,4 +226,113 @@ test('groups facts by cityId', () => {
 
   assert.equal(map.get(1).length, 2);
   assert.equal(map.get(2).length, 1);
+});
+
+test('normalizeFactRows formats valid facts and drops undiplayable rows', () => {
+  const facts = normalizeFactRows([
+    {
+      factId: 1,
+      cityId: 1,
+      cityName: 'Austin',
+      state: 'Texas',
+      factTypeId: 1,
+      factTypeName: 'population',
+      dataType: 'number',
+      unit: 'people',
+      valueNumber: 974447,
+      valueText: null,
+      valueBoolean: null
+    },
+    {
+      factId: 2,
+      cityId: 1,
+      cityName: 'Austin',
+      state: 'Texas',
+      factTypeId: 7,
+      factTypeName: 'nickname',
+      dataType: 'text',
+      unit: null,
+      valueNumber: null,
+      valueText: '   ',
+      valueBoolean: null
+    }
+  ]);
+
+  assert.deepEqual(facts, [
+    {
+      factId: 1,
+      cityId: 1,
+      cityName: 'Austin',
+      state: 'Texas',
+      factTypeId: 1,
+      factTypeName: 'population',
+      dataType: 'number',
+      unit: 'people',
+      valueNumber: 974447,
+      valueText: null,
+      valueBoolean: null,
+      answerText: '974,447'
+    }
+  ]);
+});
+
+test('processCities filters by state, sorts results, and enriches city cards', () => {
+  const cities = [
+    { cityId: 1, cityName: 'Austin', state: 'Texas' },
+    { cityId: 2, cityName: 'Boston', state: 'Massachusetts' },
+    { cityId: 3, cityName: 'Dallas', state: 'Texas' }
+  ];
+  const facts = [
+    {
+      factId: 21,
+      cityId: 1,
+      cityName: 'Austin',
+      state: 'Texas',
+      factTypeId: 7,
+      factTypeName: 'nickname',
+      dataType: 'text',
+      unit: null,
+      valueNumber: null,
+      valueText: 'Live Music Capital',
+      valueBoolean: null,
+      answerText: 'Live Music Capital'
+    },
+    {
+      factId: 22,
+      cityId: 1,
+      cityName: 'Austin',
+      state: 'Texas',
+      factTypeId: 1,
+      factTypeName: 'population',
+      dataType: 'number',
+      unit: 'people',
+      valueNumber: 974447,
+      valueText: null,
+      valueBoolean: null,
+      answerText: '974,447'
+    },
+    {
+      factId: 23,
+      cityId: 3,
+      cityName: 'Dallas',
+      state: 'Texas',
+      factTypeId: 1,
+      factTypeName: 'population',
+      dataType: 'number',
+      unit: 'people',
+      valueNumber: 1304379,
+      valueText: null,
+      valueBoolean: null,
+      answerText: '1,304,379'
+    }
+  ];
+
+  const result = processCities(cities, facts, { state: 'Texas', sort: 'alpha-desc' });
+
+  assert.deepEqual(result.map((city) => city.cityName), ['Dallas', 'Austin']);
+  assert.equal(result[1].description, 'Live Music Capital');
+  assert.deepEqual(result[1].cityInfo, [
+    { label: 'Nickname', value: 'Live Music Capital' },
+    { label: 'Population', value: '974,447' }
+  ]);
 });

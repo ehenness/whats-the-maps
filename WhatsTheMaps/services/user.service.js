@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
 const userRepository = require('../repositories/user.repository');
-const { saveStoredProfile, getStoredProfile } = require('../profileStore');
+const { saveStoredProfile, getStoredProfile, deleteStoredProfile } = require('../profileStore');
 const { listPresetProfileImages, maxBioLength, maxUploadedImageLength } = require('../config/profileConfig');
 const { getProfileImage, trimString } = require('../utils/profile.util');
 const { buildSessionUser } = require('../utils/session.util');

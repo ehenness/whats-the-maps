@@ -42,6 +42,9 @@ services:
       DB_NAME: trivia_app
     ports:
       - "${APP_PORT:-3000}:3000"
+    volumes:
+      - profile_data:/app/data
 
 volumes:
   mysql_data:
+  profile_data:
