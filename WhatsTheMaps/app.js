@@ -7,6 +7,7 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const session = require('express-session');
 const db = require('./repositories/db');
+const express = require('express');
 
 const indexRouter = require('./routes/index.routes');
 const usersRouter = require('./routes/user.routes');

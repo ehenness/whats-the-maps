@@ -8,8 +8,8 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const session = require('express-session');
 
-const createIndexRouter = require('./routes/index');
-const createUsersRouter = require('./routes/users');
+const createIndexRouter = require('./routes/index.routes');
+const createUsersRouter = require('./routes/user.routes');
 
 function loadLeaderboardService() {
   return require('./services/leaderboardService');
