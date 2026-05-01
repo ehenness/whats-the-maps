@@ -59,6 +59,16 @@ function createApp({
       return res.send('Error loading leaderboard');
     }
   });
+  /*app.get('/leaderboard', (req, res) => {
+    db.query(leaderboardSql, (err, results) => {
+      if (err) {
+        console.error(err);
+        return res.send('Error loading leaderboard');
+      }
+
+      return res.render('leaderboard', { leaderboard: results });
+    });
+  });*/
 
   app.use((req, res, next) => {
     next(createError(404));

@@ -1,5 +1,5 @@
 /** Creates shared MySQL connection used by server-side data layer */
-const mysql = require('mysql2');
+/*const mysql = require('mysql2');
 
 const db = mysql.createConnection({
   host: process.env.DB_HOST || '127.0.0.1',
@@ -19,4 +19,28 @@ if (process.env.NODE_ENV !== 'test') {
     console.log('Connected to MySQL database!');
   });
 }
-module.exports = db;
+module.exports = db;*/
+let connection = null;
+
+function getConnection() {
+  if (process.env.NO_DB === 'true') {
+    throw new Error('DB disabled');
+  }
+
+  if (!connection) {
+    const mysql = require('mysql2');
+
+    connection = mysql.createConnection({
+      host: process.env.DB_HOST || 'localhost',
+      user: process.env.DB_USER || 'root',
+      password: process.env.DB_PASSWORD || '',
+      database: process.env.DB_NAME || ''
+    });
+
+    connection.connect(); // now only runs IF actually used
+  }
+
+  return connection;
+}
+
+module.exports = { getConnection };

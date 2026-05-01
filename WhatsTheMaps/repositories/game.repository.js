@@ -2,6 +2,7 @@ const db = require('./db');
 const runQuery = require('../lib/runQuery');
 const { normalizeFactRows } = require('../utils/game.util');
 
+
 async function getCityRows() {
   const sql = 'SELECT id AS cityId, name AS cityName, state FROM cities';
   const rows = await runQuery(sql);
