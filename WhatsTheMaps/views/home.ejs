@@ -9,7 +9,7 @@
   <%# Shared site chrome appears on every page %>
   <%- include('./partials/banner.ejs') %>
 
-  <%- include('./partials/footer.ejs') %>
+  <%- include('./partials/nav.ejs') %>
 
   <main class="page-shell page-stack page-stack--wide home-shell">
     <%# Top bar shows account controls when player is signed in %>
@@ -33,6 +33,9 @@
         <% } else { %>
           <a class="button-link" href="/login">
             <span class="button">Log In</span>
+          </a>
+          <a class="button-link" href="/signup">
+            <span class="button" style="background-color: #2a8c82;">Sign up</span>
           </a>
         <% } %>
       </div>

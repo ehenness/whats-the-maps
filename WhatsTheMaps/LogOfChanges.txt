@@ -51,3 +51,7 @@
 4/27 - Emma
 - added tests and related files
 - imported DB files
+
+5/5 - Juliana
+- Changed footer to nav (more accurate)
+- Added direct sign up button in home page
