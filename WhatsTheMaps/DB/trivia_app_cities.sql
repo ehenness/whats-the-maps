@@ -44,6 +44,18 @@ LOCK TABLES `cities` WRITE;
 /*!40000 ALTER TABLE `cities` DISABLE KEYS */;
 INSERT INTO `cities` VALUES (1,'Austin','Texas'),(2,'San Antonio','Texas'),(3,'Houston','Texas'),(4,'Dallas','Texas'),(5,'Corpus Christi','Texas'),(6,'El Paso','Texas'),(7,'Amarillo','Texas'),(8,'Lubbock','Texas'),(9,'Paris','Texas'),(10,'Harlingen','Texas');
 /*!40000 ALTER TABLE `cities` ENABLE KEYS */;
+
+-- Added cities
+INSERT INTO `cities` VALUES ('11','Orlando','Florida'),
+                            ('12','Miami','Florida'),
+                            ('13','Tampa','Florida'),
+                            ('14','Jacksonville','Florida'),
+                            ('15','St. Petersburg','Florida'),
+                            ('16','Los Angeles','California'),
+                            ('17','San Francisco','California'),
+                            ('18','San Diego','California'),
+                            ('19','Sacramento','California'),
+                            ('20','San Jose','California');
 UNLOCK TABLES;
 SET @@SESSION.SQL_LOG_BIN = @MYSQLDUMP_TEMP_LOG_BIN;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;

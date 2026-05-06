@@ -13,7 +13,7 @@ as well as for expanding upon previous design choices */
   --color-danger: #b6463c;
   --color-danger-dark: #8c322a;
   --color-banner: #d87c71;
-  --color-footer: #e8d3ba;
+  --color-nav: #e8d3ba;
   --color-border: #7b6551;
   --color-text: #2f241b;
   --color-text-muted: #5d4c3d;
@@ -733,13 +733,13 @@ a {
   line-height: 1.45;
 }
 
-/* Footer and quiz styles cover global navigation plus the timed game experience */
-.site-footer {
+/* nav and quiz styles cover global navigation plus the timed game experience */
+.site-nav {
   border-bottom: 2px solid var(--color-border);
-  background-color: var(--color-footer);
+  background-color: var(--color-nav);
 }
 
-.footer-row {
+.nav-row {
   display: flex;
   justify-content: center;
   gap: 48px;
@@ -748,12 +748,12 @@ a {
   padding: 10px;
 }
 
-.footer-column {
+.nav-column {
   flex: 1;
   text-align: center;
 }
 
-.footer-links {
+.nav-links {
   display: inline-flex;
   flex-direction: column;
   gap: 6px;
@@ -763,12 +763,12 @@ a {
   text-align: left;
 }
 
-.footer-link {
+.nav-link {
   color: var(--color-text);
   text-decoration: none;
 }
 
-.footer-link:hover {
+.nav-link:hover {
   text-decoration: underline;
 }
 
@@ -925,7 +925,7 @@ a {
   }
 
   .top-bar,
-  .footer-row,
+  .nav-row,
   .city-item,
   .form-inline,
   .dashboard-actions,
@@ -938,11 +938,11 @@ a {
   }
 
   .left-section,
-  .footer-column {
+  .nav-column {
     text-align: center;
   }
 
-  .footer-links {
+  .nav-links {
     text-align: center;
   }
 
